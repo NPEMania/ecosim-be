@@ -12,6 +12,9 @@ namespace Organism {
 
         private State state = State.IDLE;
 
+        private float range = 10f;
+        private float angle = 120f;
+
         private Vector3 position;
         private Vector3 velocity;
         private Vector3 desiredDir;
@@ -26,8 +29,8 @@ namespace Organism {
         }
 
         private void FixedUpdate() {
-            desiredDir = (desiredDir + GetLevelledDir() * wandering + transform.forward * steering).normalized;
-            MoveTo(desiredDir, 5, 7);
+            // desiredDir = (desiredDir + GetLevelledDir() * wandering + transform.forward * steering).normalized;
+            // MoveTo(desiredDir, 5, 7);
         }
 
         private void MoveWithControls() {
@@ -53,6 +56,18 @@ namespace Organism {
             Vector2 random = Random.insideUnitCircle;
             Vector3 pos = new Vector3(random.x, 0, random.y);
             return pos;
+        }
+
+        private void onTriggerStay(Collider collider) {
+
+        }
+
+        private void OnDrawGizmos() {
+            Gizmos.DrawLine(transform.position, transform.position + transform.forward * range);
+            var leftDir = - Mathf.Sin(angle * Mathf.Deg2Rad / 2f) * transform.right + Mathf.Cos(angle * Mathf.Deg2Rad / 2f) * transform.forward;
+            var rightDir = Mathf.Sin(angle * Mathf.Deg2Rad / 2f) * transform.right + Mathf.Cos(angle * Mathf.Deg2Rad / 2f) * transform.forward;
+            Gizmos.DrawLine(transform.position, transform.position + leftDir * range);
+            Gizmos.DrawLine(transform.position, transform.position + rightDir * range);
         }
     }
 
