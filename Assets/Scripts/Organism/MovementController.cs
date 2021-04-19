@@ -19,9 +19,12 @@ namespace Organism {
         private Vector3 velocity;
         private Vector3 desiredDir;
 
+        private GameObject target = null;
+
         private void Start() {
             body = GetComponent<Rigidbody>();
             desiredDir = transform.forward;
+            GetComponent<SphereCollider>().radius = range;
         }
 
         void Update() {
@@ -31,6 +34,12 @@ namespace Organism {
         private void FixedUpdate() {
             // desiredDir = (desiredDir + GetLevelledDir() * wandering + transform.forward * steering).normalized;
             // MoveTo(desiredDir, 5, 7);
+            if (target != null) {
+                desiredDir = (target.transform.position - transform.position);
+                if (desiredDir.sqrMagnitude > 16) {
+                    MoveTo(desiredDir.normalized, 5, 7);
+                }
+            }
         }
 
         private void MoveWithControls() {
@@ -58,11 +67,22 @@ namespace Organism {
             return pos;
         }
 
-        private void onTriggerStay(Collider collider) {
+        private void OnTriggerStay(Collider other) {
+            if (other.gameObject.tag == "test") {
+                if (target != other.gameObject) {
+                    target = other.gameObject;
+                }
+            }
+        }
 
+        private void OnTriggerExit(Collider other) {
+            if (other.gameObject == target) {
+                target = null;
+            }
         }
 
         private void OnDrawGizmos() {
+            Gizmos.color = Color.cyan;
             Gizmos.DrawLine(transform.position, transform.position + transform.forward * range);
             var leftDir = - Mathf.Sin(angle * Mathf.Deg2Rad / 2f) * transform.right + Mathf.Cos(angle * Mathf.Deg2Rad / 2f) * transform.forward;
             var rightDir = Mathf.Sin(angle * Mathf.Deg2Rad / 2f) * transform.right + Mathf.Cos(angle * Mathf.Deg2Rad / 2f) * transform.forward;
