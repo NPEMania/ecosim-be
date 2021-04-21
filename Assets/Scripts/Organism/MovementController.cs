@@ -6,20 +6,17 @@ namespace Organism {
     public class MovementController: MonoBehaviour {
 
         private Rigidbody body;
-        private float health;
         public float wandering = 4f;
         public float steering = 1f;
-
-        private State state = State.IDLE;
 
         private float range = 10f;
         private float angle = 120f;
 
-        private Vector3 position;
-        private Vector3 velocity;
         private Vector3 desiredDir;
 
         private GameObject target = null;
+
+        private float timeSinceToppled = 0f;
 
         private void Start() {
             body = GetComponent<Rigidbody>();
@@ -27,29 +24,39 @@ namespace Organism {
             GetComponent<SphereCollider>().radius = range;
         }
 
-        void Update() {
-            
-        }
-
         private void FixedUpdate() {
+            // This commented code is for wandering
             // desiredDir = (desiredDir + GetLevelledDir() * wandering + transform.forward * steering).normalized;
             // MoveTo(desiredDir, 5, 7);
-            if (target != null) {
+            if (Vector3.Angle(transform.up, Vector3.up) > 60f) {
+                timeSinceToppled += Time.deltaTime;
+                if (timeSinceToppled >= 4f) {
+                    UnTopple();
+                    timeSinceToppled = 0f;
+                }
+            } else if (target != null) {
                 desiredDir = (target.transform.position - transform.position);
+                desiredDir.y = 0f;
                 if (desiredDir.sqrMagnitude > 16) {
                     MoveTo(desiredDir.normalized, 5, 7);
+                } else {
+                    body.velocity = Vector3.zero;
+                    body.angularVelocity = Vector3.zero;
+                }
+            } else {
+                // to restrict forces and spinning
+                if (body.velocity.sqrMagnitude > 0.1f && body.angularVelocity.sqrMagnitude > 0.1f) {
+                    Debug.Log("Velocity is not zero");
+                    body.velocity = Vector3.zero;
+                    body.angularVelocity = Vector3.zero;
                 }
             }
         }
 
-        private void MoveWithControls() {
-            var dir = new Vector3(Input.GetAxis("Horizontal"), 0 , Input.GetAxis("Vertical")).normalized;
-            if (dir.sqrMagnitude > 0f) {
-                var rotation = Quaternion.LookRotation(dir, transform.up);
-                body.MoveRotation(Quaternion.Lerp(body.rotation, rotation, Time.deltaTime * 3f));
-                var velocity = dir * 3;
-                body.MovePosition(transform.position + velocity * Time.deltaTime);
-            }
+        private void UnTopple() {
+            transform.up = Vector3.up;
+            body.angularVelocity = Vector3.zero;
+            body.velocity = Vector3.zero;
         }
 
         private void MoveTo(Vector3 dir, float moveSpeed, float rotSpeed) {
