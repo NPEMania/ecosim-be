@@ -5,8 +5,9 @@ using UnityEngine;
 namespace Organism {
     public class MovementController: MonoBehaviour {
 
+        private State state = State.IDLE;
         private Rigidbody body;
-        public float wandering = 4f;
+        public float wandering = 0.3f;
         public float steering = 1f;
 
         private float range = 10f;
@@ -25,30 +26,52 @@ namespace Organism {
         }
 
         private void FixedUpdate() {
-            // This commented code is for wandering
-            // desiredDir = (desiredDir + GetLevelledDir() * wandering + transform.forward * steering).normalized;
-            // MoveTo(desiredDir, 5, 7);
+            
             if (Vector3.Angle(transform.up, Vector3.up) > 60f) {
                 timeSinceToppled += Time.deltaTime;
-                if (timeSinceToppled >= 4f) {
+                if (timeSinceToppled >= 2f) {
                     UnTopple();
                     timeSinceToppled = 0f;
                 }
-            } else if (target != null) {
-                desiredDir = (target.transform.position - transform.position);
-                desiredDir.y = 0f;
-                if (desiredDir.sqrMagnitude > 16) {
+            } else if (target == null && !IsMoving()) {
+                UnTopple();
+            }
+
+            switch (state) {
+                case State.IDLE: {
+                    desiredDir = (desiredDir + GetLevelledDir() * wandering + transform.forward * steering).normalized;
                     MoveTo(desiredDir.normalized, 5, 7);
-                } else {
-                    body.velocity = Vector3.zero;
-                    body.angularVelocity = Vector3.zero;
+                    break;
                 }
-            } else {
-                // to restrict forces and spinning
-                if (body.velocity.sqrMagnitude > 0.1f && body.angularVelocity.sqrMagnitude > 0.1f) {
-                    Debug.Log("Velocity is not zero");
-                    body.velocity = Vector3.zero;
-                    body.angularVelocity = Vector3.zero;
+                case State.CHASING: {
+                    if (target != null) {
+                        desiredDir = (target.transform.position - transform.position);
+                        desiredDir.y = 0f;
+                        if (desiredDir.sqrMagnitude > 16) {
+                            if (state != State.CHASING) state = State.CHASING;
+                            MoveTo(desiredDir.normalized, 5, 7);
+                        } else {
+                            // Here the body has reached the attack range
+                            state = State.ATTACKING;
+                            body.velocity = Vector3.zero;
+                            body.angularVelocity = Vector3.zero;
+                        }
+                    }
+                    break;
+                }
+                case State.ATTACKING: {
+                    if (target != null) {
+                        var targetSqDist = (transform.position - target.transform.position).sqrMagnitude;
+                        if (targetSqDist > 16) {
+                            state = State.CHASING;
+                        } else {
+                            if (state != State.ATTACKING) state = State.ATTACKING;
+                            // Attacking code goes here
+                        }
+                    } else {
+                        state = State.IDLE;
+                    }
+                    break;
                 }
             }
         }
@@ -74,9 +97,14 @@ namespace Organism {
             return pos;
         }
 
+        private bool IsMoving() {
+            return body.angularVelocity.sqrMagnitude > 0.01f || body.velocity.sqrMagnitude > 0.01f;
+        }
+
         private void OnTriggerStay(Collider other) {
             if (other.gameObject.tag == "test") {
                 if (target != other.gameObject) {
+                    state = State.CHASING;
                     target = other.gameObject;
                 }
             }
@@ -85,6 +113,14 @@ namespace Organism {
         private void OnTriggerExit(Collider other) {
             if (other.gameObject == target) {
                 target = null;
+                state = State.IDLE;
+            }
+        }
+
+        private void OnCollisionStay(Collision other) {
+            if (other.gameObject.tag == "walls") {
+                desiredDir = other.GetContact(0).normal;
+                MoveTo(desiredDir.normalized, 5f, 7f);
             }
         }
 
