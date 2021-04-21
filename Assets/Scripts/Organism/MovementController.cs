@@ -57,6 +57,7 @@ namespace Organism {
             transform.up = Vector3.up;
             body.angularVelocity = Vector3.zero;
             body.velocity = Vector3.zero;
+            
         }
 
         private void MoveTo(Vector3 dir, float moveSpeed, float rotSpeed) {
