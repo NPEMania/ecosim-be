@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Organism {
+
+    // This class will solely control ONLY Movement (walking running stopping etc)
     public class MovementController: MonoBehaviour {
 
         private State state = State.IDLE;
