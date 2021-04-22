@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 
 namespace Organism {
@@ -7,7 +8,7 @@ namespace Organism {
     // This class will solely control ONLY Movement (walking running stopping etc)
     public class MovementController: MonoBehaviour {
 
-        private State state = State.IDLE;
+        private IBrain brain;
         private Rigidbody body;
         public float wandering = 0.3f;
         public float steering = 1f;
@@ -23,8 +24,13 @@ namespace Organism {
 
         private void Start() {
             body = GetComponent<Rigidbody>();
+            brain = GetComponent<IBrain>();
             desiredDir = transform.forward;
             GetComponent<SphereCollider>().radius = range;
+        }
+
+        public void UpdateTarget(GameObject target) {
+            this.target = target;
         }
 
         private void FixedUpdate() {
@@ -39,40 +45,33 @@ namespace Organism {
                 UnTopple();
             }
 
-            switch (state) {
-                case State.IDLE: {
+            
+
+            switch (brain.OrgState) {
+                case OrganismState.IDLE: {
                     desiredDir = (desiredDir + GetLevelledDir() * wandering + transform.forward * steering).normalized;
                     MoveTo(desiredDir.normalized, 5, 7);
                     break;
                 }
-                case State.CHASING: {
+                case OrganismState.CHASING_FOOD: {
                     if (target != null) {
                         desiredDir = (target.transform.position - transform.position);
                         desiredDir.y = 0f;
                         if (desiredDir.sqrMagnitude > 16) {
-                            if (state != State.CHASING) state = State.CHASING;
-                            MoveTo(desiredDir.normalized, 5, 7);
+                            MoveTo(desiredDir.normalized, 10, 7);
                         } else {
                             // Here the body has reached the attack range
-                            state = State.ATTACKING;
                             body.velocity = Vector3.zero;
                             body.angularVelocity = Vector3.zero;
+                            brain.OnTargetInAttackRange(target);
                         }
                     }
                     break;
                 }
-                case State.ATTACKING: {
-                    if (target != null) {
-                        var targetSqDist = (transform.position - target.transform.position).sqrMagnitude;
-                        if (targetSqDist > 16) {
-                            state = State.CHASING;
-                        } else {
-                            if (state != State.ATTACKING) state = State.ATTACKING;
-                            // Attacking code goes here
-                        }
-                    } else {
-                        state = State.IDLE;
-                    }
+                case OrganismState.REST: {
+                    Debug.Log("REST State");
+                    body.velocity = Vector3.zero;
+                    body.angularVelocity = Vector3.zero;
                     break;
                 }
             }
@@ -103,22 +102,6 @@ namespace Organism {
             return body.angularVelocity.sqrMagnitude > 0.01f || body.velocity.sqrMagnitude > 0.01f;
         }
 
-        private void OnTriggerStay(Collider other) {
-            if (other.gameObject.tag == "test") {
-                if (target != other.gameObject) {
-                    state = State.CHASING;
-                    target = other.gameObject;
-                }
-            }
-        }
-
-        private void OnTriggerExit(Collider other) {
-            if (other.gameObject == target) {
-                target = null;
-                state = State.IDLE;
-            }
-        }
-
         private void OnCollisionStay(Collision other) {
             if (other.gameObject.tag == "walls") {
                 desiredDir = other.GetContact(0).normal;
@@ -134,9 +117,5 @@ namespace Organism {
             Gizmos.DrawLine(transform.position, transform.position + leftDir * range);
             Gizmos.DrawLine(transform.position, transform.position + rightDir * range);
         }
-    }
-
-    enum State {
-        IDLE, CHASING, ATTACKING
     }
 }
