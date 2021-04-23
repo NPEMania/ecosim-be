@@ -558,12 +558,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 808546143}
-  - component: {fileID: 808546142}
   - component: {fileID: 808546146}
   - component: {fileID: 808546145}
   - component: {fileID: 808546144}
   - component: {fileID: 808546148}
+  - component: {fileID: 808546142}
   - component: {fileID: 808546147}
+  - component: {fileID: 808546149}
   m_Layer: 0
   m_Name: Mover
   m_TagString: Untagged
@@ -664,6 +665,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d54b9bb213933804c8fb36f0934abfc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &808546149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 808546141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d30b00e944c915f42856ef5c19eff20b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &855034207

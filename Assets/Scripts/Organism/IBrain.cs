@@ -8,6 +8,10 @@ namespace Organism {
             set;
         }
 
+        Vector3 Velocity {
+            get; set;
+        }
+
         void OnStateChanged(OrganismState newState);
 
         void OnHuntTargetAcquired(GameObject target);

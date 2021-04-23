@@ -2,21 +2,25 @@ using UnityEngine;
 using Organism;
 using System.Collections;
 using System;
+using UnityEditorInternal;
 
 namespace Organism {
 
     class FSMBrain: MonoBehaviour, IBrain {
 
         private OrganismState state;
+        private OrganismState lastState;
         private Interactor interactor;
         private MovementController controller;
         private GameObject target;
 
         private float stamina = 100f;
 
-        private bool cooldown = false;
+        private float cooldown = 4f;
 
         private Coroutine staminaRegen;
+
+        private Rigidbody body;
 
         public OrganismState OrgState {
             get { return state; }
@@ -27,9 +31,16 @@ namespace Organism {
             }
         }
 
+        private Vector3 velocity;
+        public Vector3 Velocity {
+            get { return velocity; }
+            set { velocity = value; }
+        }
+
         private void Start() {
             interactor = GetComponent<Interactor>();
             controller = GetComponent<MovementController>();
+            body = GetComponent<Rigidbody>();
         }
 
         public void OnStateChanged(OrganismState state) {
@@ -49,7 +60,7 @@ namespace Organism {
         }
 
         public void OnMateAcquired(GameObject target) {
-
+            
         }
 
         public void OnTargetInAttackRange(GameObject target) {
@@ -67,23 +78,29 @@ namespace Organism {
         private void Update() {
             switch (OrgState) {
                 case OrganismState.CHASING_FOOD: {
-                    if (stamina > 0.1f && !cooldown) {
-                        stamina -= Time.deltaTime * 6f;
-                        Debug.Log(stamina);
-                    }
-                    if (stamina <= 0.1f) {
-                        cooldown = true;
-                        OrgState = OrganismState.REST;
-                        controller.UpdateTarget(null);
-                        stamina += Time.deltaTime * 2f; // Here stamina regen rate can be used
-                        if (stamina >= 100f) {
-                            stamina = 100f;
-                            cooldown = false;
-                            OrgState = OrganismState.IDLE;
+                    if (velocity.sqrMagnitude > 99f) {
+                        Debug.Log("Stamina Depleting");
+                        stamina -= Time.deltaTime * 10f;
+                    } else {
+                        if (stamina < 100f) {
+                            stamina += Time.deltaTime * 10f;
                         }
+                    }
+                    if (stamina < 0) {
+                        Debug.Log("Stamina is less than zero");
+                        state = OrganismState.REST;
+                    } else if (stamina > 50f) {
+                        // Should Help restore last state
                     }
                     break;
                 }
+            }
+        }
+
+        private void ChangeAndCacheState(OrganismState newState) {
+            if (state != newState) {
+                lastState = state;
+                state = newState;
             }
         }
     }

@@ -17,20 +17,6 @@ namespace Organism {
             brain = GetComponent<IBrain>();
         }
 
-        private void OnTriggerStay(Collider other) {
-            if (other.gameObject.tag == "test") {
-                if (target != other.gameObject) {
-                    brain.OnHuntTargetAcquired(other.gameObject);
-                }
-            }
-        }
-
-        private void OnTriggerExit(Collider other) {
-            if (other.gameObject == target) {
-                brain.OnHuntTargetLeft(other.gameObject);
-            }
-        }
-
         public void TargetInRange(GameObject target) {
             this.target = target;
         }
@@ -40,16 +26,14 @@ namespace Organism {
         }
 
         private void Update() {
-            switch(brain.OrgState) {
+            switch (brain.OrgState) {
                 case OrganismState.ATTACKING_FOOD: {
                     if (target != null) {
-                        if ((transform.position - target.transform.position).sqrMagnitude > 16) {
-                            brain.OnTargetLeftAttackRange(target);
+                        if ((transform.position - target.transform.position).sqrMagnitude < 16) {
+                            // Attack logic working
                         } else {
-                            Debug.Log("Attacking Now");
+                            brain.OnTargetLeftAttackRange(target);
                         }
-                    } else {
-                        Debug.Log("Target is null, but state is still attacking");
                     }
                     break;
                 }

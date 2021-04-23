@@ -26,7 +26,6 @@ namespace Organism {
             body = GetComponent<Rigidbody>();
             brain = GetComponent<IBrain>();
             desiredDir = transform.forward;
-            GetComponent<SphereCollider>().radius = range;
         }
 
         public void UpdateTarget(GameObject target) {
@@ -63,6 +62,7 @@ namespace Organism {
                             // Here the body has reached the attack range
                             body.velocity = Vector3.zero;
                             body.angularVelocity = Vector3.zero;
+                            brain.Velocity = Vector3.zero;
                             brain.OnTargetInAttackRange(target);
                         }
                     }
@@ -87,8 +87,9 @@ namespace Organism {
             if (dir.sqrMagnitude > 0f) {
                 var rotation = Quaternion.LookRotation(dir, transform.up);
                 body.MoveRotation(Quaternion.Lerp(body.rotation, rotation, Time.deltaTime * rotSpeed));
-                var velocity = dir * moveSpeed;
-                body.MovePosition(transform.position + velocity * Time.deltaTime);
+                brain.Velocity = dir * moveSpeed;
+                body.MovePosition(transform.position + brain.Velocity * Time.deltaTime);
+                // Debug.Log(brain.Velocity.sqrMagnitude + " ---- " + body.velocity.sqrMagnitude);
             }
         }
 
@@ -107,15 +108,6 @@ namespace Organism {
                 desiredDir = other.GetContact(0).normal;
                 MoveTo(desiredDir.normalized, 5f, 7f);
             }
-        }
-
-        private void OnDrawGizmos() {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(transform.position, transform.position + transform.forward * range);
-            var leftDir = - Mathf.Sin(angle * Mathf.Deg2Rad / 2f) * transform.right + Mathf.Cos(angle * Mathf.Deg2Rad / 2f) * transform.forward;
-            var rightDir = Mathf.Sin(angle * Mathf.Deg2Rad / 2f) * transform.right + Mathf.Cos(angle * Mathf.Deg2Rad / 2f) * transform.forward;
-            Gizmos.DrawLine(transform.position, transform.position + leftDir * range);
-            Gizmos.DrawLine(transform.position, transform.position + rightDir * range);
         }
     }
 }
