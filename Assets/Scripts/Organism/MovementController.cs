@@ -25,7 +25,6 @@ namespace Organism {
         private void Start() {
             body = GetComponent<Rigidbody>();
             brain = GetComponent<IBrain>();
-            desiredDir = transform.forward;
         }
 
         public void UpdateTarget(GameObject target) {
@@ -40,8 +39,9 @@ namespace Organism {
                     UnTopple();
                     timeSinceToppled = 0f;
                 }
-            } else if (target == null && !IsMoving()) {
-                UnTopple();
+            } else if (IsMoving()) {
+                body.angularVelocity = Vector3.zero;
+                body.velocity = Vector3.zero;
             }
 
             
@@ -94,7 +94,7 @@ namespace Organism {
         }
 
         private Vector3 GetLevelledDir() {
-            Vector2 random = Random.insideUnitCircle;
+            Vector2 random = Random.insideUnitCircle.normalized;
             Vector3 pos = new Vector3(random.x, 0, random.y);
             return pos;
         }
