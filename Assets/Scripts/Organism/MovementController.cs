@@ -16,6 +16,9 @@ namespace Organism {
         private float range = 10f;
         private float angle = 120f;
 
+        private float walkSpeed;
+        private float sprintSpeed;
+
         private Vector3 desiredDir;
 
         private GameObject target = null;
@@ -29,6 +32,11 @@ namespace Organism {
 
         public void UpdateTarget(GameObject target) {
             this.target = target;
+        }
+
+        public void SetupGene(Gene gene) {
+            this.walkSpeed = gene.walkSpeed;
+            this.sprintSpeed = gene.sprintSpeed;
         }
 
         private void FixedUpdate() {
