@@ -1,10 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace Organism {
     public class Gene {
-
+        public readonly String species;
         public readonly float range;
         public readonly float angle;
         public readonly float sprintSpeed;

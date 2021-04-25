@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 7544629553498896821}
   m_Layer: 0
   m_Name: Mover
-  m_TagString: Untagged
+  m_TagString: mover
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -92,6 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d54b9bb213933804c8fb36f0934abfc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 
 --- !u!114 &7544629553498896782
 MonoBehaviour:
   m_ObjectHideFlags: 0
