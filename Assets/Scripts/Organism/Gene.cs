@@ -7,6 +7,8 @@ using UnityEngine;
 namespace Organism {
     public class Gene {
         public readonly String species;
+        public readonly String[] preys; // insert species
+        public readonly String[] predators; // insert species
         public readonly float range; // collider.radius = range / scale;
         public readonly float angle;
         public readonly float sprintSpeed;
