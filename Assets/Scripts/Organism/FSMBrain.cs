@@ -3,10 +3,13 @@ using Organism;
 using System.Collections;
 using System;
 using UnityEditorInternal;
+using Health;
 
 namespace Organism {
 
-    class FSMBrain: MonoBehaviour, IBrain {
+    class FSMBrain: MonoBehaviour, IBrain, Damageable {
+
+        public String id;
 
         private OrganismState state;
         private OrganismState lastState;
@@ -37,6 +40,23 @@ namespace Organism {
             set { velocity = value; }
         }
 
+        float Damageable.MaxHP { get ; set ; }
+        float Damageable.MaxEnergy { get ; set ; }
+        float Damageable.MaxStamina { get ; set ; }
+        float Damageable.Defense { get ; set ; }
+        float Damageable.Attack { get ; set ; }
+        float Damageable.CurrentHP { get ; set ; }
+        float Damageable.CurrentEnergy { get ; set ; }
+        float Damageable.CurrentStamina { get ; set ; }
+
+        void Damageable.DealDamage(Damageable opponent) {
+            
+        }
+
+        void Damageable.ReceiveDamage(float damage) {
+            Debug.Log(id + " Damage --- " + damage);
+        }
+
         private void Start() {
             interactor = GetComponent<Interactor>();
             controller = GetComponent<MovementController>();
@@ -48,13 +68,13 @@ namespace Organism {
         }
 
         public void OnHuntTargetAcquired(GameObject target) {
-            Debug.Log("Target Got");
+            Debug.Log(id + " Target Got");
             OrgState = OrganismState.CHASING_FOOD;
             controller.UpdateTarget(target);
         }
 
         public void OnHuntTargetLeft(GameObject target) {
-            Debug.Log("Target Left");
+            Debug.Log(id + " Target Left");
             OrgState = OrganismState.IDLE;
             controller.UpdateTarget(null);
         }

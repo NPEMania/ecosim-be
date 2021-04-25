@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Health;
@@ -32,7 +33,7 @@ namespace Organism {
             switch (brain.OrgState) {
                 case OrganismState.ATTACKING_FOOD: {
                     if (target != null) {
-                        if ((transform.position - target.transform.position).sqrMagnitude < 20) {
+                        if ((transform.position - target.transform.position).sqrMagnitude < 16) {
                             // Attack logic working
                             if (attackCoroutine == null) attackCoroutine = StartCoroutine(DealDamage());
                         } else {
@@ -48,7 +49,6 @@ namespace Organism {
         IEnumerator DealDamage() {
             while (true) {
                 if (target != null) {
-                    Debug.Log("Attacking");
                     target.GetComponent<Damageable>().ReceiveDamage(5f);
                     yield return new WaitForSeconds(2f);
                 }

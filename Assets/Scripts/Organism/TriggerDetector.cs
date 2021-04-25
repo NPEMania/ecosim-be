@@ -20,7 +20,7 @@ namespace Organism {
         }
 
         private void OnTriggerStay(Collider other) {
-            if (other.gameObject.tag == "test") {
+            if (other.gameObject.tag == "mover") {
                 if (other.gameObject != target) {
                     target = other.gameObject;
                     brain.OnHuntTargetAcquired(other.gameObject);
