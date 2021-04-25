@@ -26,7 +26,7 @@ namespace Organism {
         }
 
         private void Update() {
-            switch (brain.OrgState) {
+            /*switch (brain.OrgState) {
                 case OrganismState.ATTACKING_FOOD: {
                     if (target != null) {
                         if ((transform.position - target.transform.position).sqrMagnitude < 16) {
@@ -37,7 +37,7 @@ namespace Organism {
                     }
                     break;
                 }
-            }
+            }*/
         }
     }
 }

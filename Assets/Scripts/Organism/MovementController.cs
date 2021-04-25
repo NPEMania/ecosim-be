@@ -44,9 +44,10 @@ namespace Organism {
                 body.velocity = Vector3.zero;
             }
 
-            
+            desiredDir = (desiredDir + GetLevelledDir() * wandering + transform.forward * steering).normalized;
+            MoveTo(desiredDir.normalized, 5, 7);
 
-            switch (brain.OrgState) {
+            /*switch (brain.OrgState) {
                 case OrganismState.IDLE: {
                     desiredDir = (desiredDir + GetLevelledDir() * wandering + transform.forward * steering).normalized;
                     MoveTo(desiredDir.normalized, 5, 7);
@@ -74,7 +75,7 @@ namespace Organism {
                     body.angularVelocity = Vector3.zero;
                     break;
                 }
-            }
+            }*/
         }
 
         private void UnTopple() {
