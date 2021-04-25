@@ -16,7 +16,7 @@ namespace Organism {
 
         private void Start() {
             brain = GetComponent<IBrain>();
-            GetComponent<SphereCollider>().radius = range;
+            GetComponent<SphereCollider>().radius = range; // collider.radius = range / scale;
         }
 
         private void OnTriggerStay(Collider other) {
