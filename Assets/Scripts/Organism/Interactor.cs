@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Health;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
@@ -11,6 +12,8 @@ namespace Organism {
         private GameObject target;
 
         private IBrain brain;
+
+        private Coroutine attackCoroutine;
 
         
         void Start() {
@@ -26,18 +29,30 @@ namespace Organism {
         }
 
         private void Update() {
-            /*switch (brain.OrgState) {
+            switch (brain.OrgState) {
                 case OrganismState.ATTACKING_FOOD: {
                     if (target != null) {
-                        if ((transform.position - target.transform.position).sqrMagnitude < 16) {
+                        if ((transform.position - target.transform.position).sqrMagnitude < 20) {
                             // Attack logic working
+                            if (attackCoroutine == null) attackCoroutine = StartCoroutine(DealDamage());
                         } else {
+                            if (attackCoroutine != null) StopCoroutine(attackCoroutine);
                             brain.OnTargetLeftAttackRange(target);
                         }
                     }
                     break;
                 }
-            }*/
+            }
+        }
+
+        IEnumerator DealDamage() {
+            while (true) {
+                if (target != null) {
+                    Debug.Log("Attacking");
+                    target.GetComponent<Damageable>().ReceiveDamage(5f);
+                    yield return new WaitForSeconds(2f);
+                }
+            }
         }
     }
 }

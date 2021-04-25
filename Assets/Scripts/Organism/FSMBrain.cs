@@ -76,7 +76,7 @@ namespace Organism {
         }
 
         private void Update() {
-            /*switch (OrgState) {
+            switch (OrgState) {
                 case OrganismState.CHASING_FOOD: {
                     if (velocity.sqrMagnitude > 99f) {
                         Debug.Log("Stamina Depleting");
@@ -94,7 +94,7 @@ namespace Organism {
                     }
                     break;
                 }
-            }*/
+            }
         }
 
         private void ChangeAndCacheState(OrganismState newState) {

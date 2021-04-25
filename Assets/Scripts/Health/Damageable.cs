@@ -2,25 +2,22 @@ using UnityEngine;
 
 namespace Health {
 
-    public abstract class Damageable {
+    public interface Damageable {
 
-        protected float maxHP;
-        protected float maxEnergy;
-        protected float maxStamina;
-        protected float defense; // varies from 0 to 100
-        protected float attack; // varies from 0 to 100
+        float MaxHP { get; set; }
+        float MaxEnergy { get; set; }
+        float MaxStamina { get; set; }
+        float Defense { get; set; } // varies from 0 to 100
+        float Attack { get; set; } // varies from 0 to 100
 
 
-        protected float currentHP;
-        protected float currentEnergy;
-        protected float currentStamina;
+        float CurrentHP { get; set; }
+        float CurrentEnergy { get; set; }
+        float CurrentStamina { get; set; }
 
-        public void ReceiveDamage(float damage) {
-            currentHP = currentHP - 100 * damage / (100 + defense);
-        }
+        void ReceiveDamage(float damage);
+        // hp = hp - attack * 100 / (100 + defense)
 
-        public void DealDamage(Damageable opponent) {
-            opponent.ReceiveDamage(this.attack);
-        }
+        void DealDamage(Damageable opponent);
     }
 }
