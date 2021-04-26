@@ -9,6 +9,7 @@ namespace Organism {
         public readonly String species;
         public readonly String[] preys; // insert species
         public readonly String[] predators; // insert species
+        public readonly Gender gender;
         public readonly float range; // collider.radius = range / scale;
         public readonly float angle;
         public readonly float sprintSpeed;
@@ -21,12 +22,15 @@ namespace Organism {
         public readonly float attackRange;
         public readonly float defense;
         public readonly float scale;
+        public readonly float urgeRate;
+        public readonly float evadeCooldown; // In seconds;
 
         public float[] ToArray() {
             return new float[] {
                 range, angle, sprintSpeed, walkSpeed, 
                 maxHP, maxEnergy, maxStamina, attack,
-                attackGap, attackRange, defense, scale
+                attackGap, attackRange, defense, scale,
+                urgeRate
             };
         }
 
@@ -35,6 +39,9 @@ namespace Organism {
         }
 
         public Gene(string species, float[] a) {
+            int random = (new System.Random()).Next(0, 2);
+            if (random == 0) gender = Gender.MALE;
+            else gender = Gender.FEMALE;
             this.species = species;
             range = a[0];
             angle = a[1];
@@ -48,6 +55,7 @@ namespace Organism {
             attackRange = a[9];
             defense = a[10];
             scale = a[11];
+            urgeRate = a[12];
         }
     }
 }

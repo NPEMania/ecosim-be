@@ -1,4 +1,5 @@
 using UnityEngine;
+using Organism;
 
 namespace Health {
 
@@ -15,7 +16,7 @@ namespace Health {
         float CurrentEnergy { get; set; }
         float CurrentStamina { get; set; }
 
-        void ReceiveDamage(float damage);
+        void ReceiveDamage(float damage, GameObject opponent);
         // hp = hp - attack * 100 / (100 + defense)
 
         void DealDamage(Damageable opponent);

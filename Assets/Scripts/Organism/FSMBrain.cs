@@ -12,8 +12,7 @@ namespace Organism {
 
         public String id;
         public int geneId;
-        private Gene objGene;
-        private float currentHP;
+        public Gene gene;
         private OrganismState state;
         private OrganismState lastState;
         private Interactor interactor;
@@ -22,21 +21,24 @@ namespace Organism {
 
         private TriggerDetector triggerDetector;
 
-        private float stamina = 100f;
-        private float maxStamina = 100f;
-
-        private float maxHP = 100f;
-        private float cooldown = 4f;
-
-        private Coroutine staminaRegen;
+        private float stamina;
+        private float currentHP;
+        private float energy;
+        private float staminaRate = 10f;
+        private float urge = 0f;
+        private float timeSinceLastHit = 0f;
+        private float timeSinceAlive = 0f;
 
         public void SetupGenes(Gene gene) {
-            this.maxStamina=gene.maxStamina;
-            this.stamina = maxStamina;
-            this.maxHP=gene.maxHP;
-            this.currentHP=maxHP;
+            this.stamina = gene.maxStamina;
+            this.currentHP = gene.maxHP;
+            this.energy = gene.maxEnergy;
         }
-       
+
+        public Gene SelfGene {
+            get { return gene; }
+            set {}
+        }
 
         public OrganismState OrgState {
             get { return state; }
@@ -56,24 +58,47 @@ namespace Organism {
         // float Damageable.MaxHP { get ; set ; }
         // float Damageable.MaxEnergy { get ; set ; }
         // float Damageable.MaxStamina { get ; set ; }
-        public float Defense { get { return objGene.defense; } set {} }
-        public float Attack { get { return objGene.attack; } set {} }
+        public float Defense { get { return gene.defense; } set {} }
+        public float Attack { get { return gene.attack; } set {} }
         public float CurrentHP { get { return currentHP; }
             set { 
-                currentHP=value;
+                currentHP = value;
                 if (currentHP <= 0) {
                     Destroy(this.gameObject);
                 }
             }
         }
-        public float CurrentEnergy { get { return 0; } set {} }
-        public float CurrentStamina { get { return stamina; } set {stamina = value; } }
+        public float CurrentEnergy { get { return energy; } 
+            set {
+                energy = value;
+                if (energy < 0) {
+                    energy = gene.maxEnergy;
+                    CurrentHP = CurrentHP - 1f; // Not scaling
+                }
+                if (energy > gene.maxEnergy) energy = gene.maxEnergy;
+            }
+        }
+        public float CurrentStamina { get { return stamina; }
+            set {
+                stamina = value;
+                if (stamina < 0) {
+                    if (OrgState == OrganismState.EVADING || OrgState == OrganismState.CHASING_FOOD) {
+                        stamina = gene.maxStamina;
+                        CurrentEnergy = CurrentEnergy - 1f; // Not scaling
+                    } else {
+                        stamina = 0;
+                        OrgState = OrganismState.REST;
+                    }
+                }
+                if (stamina > gene.maxStamina) stamina = gene.maxStamina;
+            } 
+        }
 
         public void DealDamage(Damageable opponent) {
             
         }
 
-        public void ReceiveDamage(float damage) {
+        public void ReceiveDamage(float damage, GameObject gameObject) {
             /*if(currentHP<=0) {
                 Debug.Log(id + " Deaddddd --- " + damage);
                 Destroy(this.gameObject);
@@ -81,19 +106,25 @@ namespace Organism {
                 currentHP=(currentHP-damage);
                 Debug.Log(id + " Damage --- " + currentHP);
             }*/
-            CurrentHP = CurrentHP - damage * 100 / (100 + objGene.defense);
+            CurrentHP = CurrentHP - damage * 100 / (100 + gene.defense);
             Debug.Log(id + " Damage --- " + currentHP);
+            timeSinceLastHit = timeSinceAlive;
+            // TODO: fight or flight criteria
+            // threshold is maybe 0.75f of self health
+            // if my health / energy is greater than threshold, I'll attack
+            // else if my health / energy is less than threshold, but the opponent is prey, I'll attack
+            // else if my health / energy is less than threshold, but opponent is predator, I'll run
         }
 
         private void Start() {
-            objGene=SampleGenes.geneArray[geneId];
-            SetupGenes(objGene);
+            gene=SampleGenes.geneArray[geneId];
+            SetupGenes(gene);
             interactor = GetComponent<Interactor>();
-            interactor.SetupGene(objGene);
+            interactor.SetupGene(gene);
             controller = GetComponent<MovementController>();
-            controller.SetupGene(objGene);
+            controller.SetupGene(gene);
             triggerDetector=GetComponent<TriggerDetector>();
-            triggerDetector.SetupGene(objGene);
+            triggerDetector.SetupGene(gene);
         }
 
         public void OnStateChanged(OrganismState state) {
@@ -118,7 +149,7 @@ namespace Organism {
 
         public void OnTargetInAttackRange(GameObject target) {
             if (this.target != target) this.target = target;
-            OrgState = OrganismState.ATTACKING_FOOD;
+            OrgState = OrganismState.ATTACKING;
             interactor.TargetInRange(target);
         }
 
@@ -129,23 +160,67 @@ namespace Organism {
         }
 
         private void Update() {
+
+            // TODO: Deplete Energy on attacking
+            UpdateStats();
+            DetermineAction();
+
             switch (OrgState) {
                 case OrganismState.CHASING_FOOD: {
-                    if (velocity.sqrMagnitude > (maxStamina-1)) {
+                    if (velocity.sqrMagnitude > gene.sprintSpeed * gene.sprintSpeed) {
                         Debug.Log("Stamina Depleting");
-                        stamina -= Time.deltaTime * 10f;
+                        stamina -= Time.deltaTime * staminaRate;
                     } else {
-                        if (stamina < maxStamina) {
-                            stamina += Time.deltaTime * 10f;
+                        if (stamina < gene.maxStamina) {
+                            stamina += Time.deltaTime * staminaRate;
                         }
                     }
                     if (stamina < 0) {
                         Debug.Log("Stamina is less than zero");
                         state = OrganismState.REST;
-                    } else if (stamina > (maxStamina/2)) {
+                    } else if (stamina > (gene.maxStamina/2)) {
                         // Should Help restore last state
                     }
                     break;
+                }
+            }
+        }
+
+        private void UpdateStats() {
+            timeSinceAlive += Time.deltaTime;
+            if (OrgState != OrganismState.REST) {
+                CurrentEnergy = CurrentEnergy - Time.deltaTime;
+            }
+            if (velocity.sqrMagnitude >= (gene.sprintSpeed * gene.sprintSpeed)) {
+                CurrentStamina = CurrentStamina - Time.deltaTime * staminaRate;
+            } else {
+                // When not running, stamina regens over time
+                CurrentStamina += Time.deltaTime * staminaRate;
+            }
+            //Reset urge to zero after mating;
+            urge = urge + Time.deltaTime;
+            if (urge > 100f) {
+                urge = 100f;
+            }
+        }
+
+        private void DetermineAction() {
+            if (OrgState != OrganismState.EVADING 
+                || OrgState != OrganismState.CHASING_FOOD
+                || OrgState != OrganismState.ATTACKING
+                || OrgState != OrganismState.MATING) {
+                if (CurrentHP < gene.maxHP / 2 || CurrentEnergy < gene.maxEnergy / 2) {
+                    OrgState = OrganismState.SEEKING_FOOD;
+                } else if (urge == 100f && (CurrentHP / gene.maxHP) > 0.75f && (CurrentEnergy / gene.maxEnergy) > 0.75f) {
+                    OrgState = OrganismState.SEARCHING_MATE;
+                }   
+            } else if (OrgState == OrganismState.EVADING) {
+                //TODO: Use some way to determine if this is safe
+                // Maybe timeout after last received damage (Health was depleted long ago)
+                // Maybe chaser exiting collider
+                if (timeSinceAlive - timeSinceLastHit > gene.evadeCooldown) {
+                    // Now probably it is safe, so can go to idle
+                    OrgState = OrganismState.IDLE;
                 }
             }
         }

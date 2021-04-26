@@ -21,12 +21,17 @@ namespace Organism {
         }
 
         private void OnTriggerStay(Collider other) {
-            if (other.gameObject.tag == "mover") {
+            if (brain.OrgState == OrganismState.SEEKING_FOOD) {
+                // Allow to scan for food targets
+            } else if (brain.OrgState == OrganismState.SEARCHING_MATE) {
+                // Allow to scan mates
+            }
+            /*if (other.gameObject.tag == "mover") {
                 if (other.gameObject != target) {
                     target = other.gameObject;
                     brain.OnHuntTargetAcquired(other.gameObject);
                 }
-            }
+            }*/
         }
           public void SetupGene(Gene gene) {
             this.range=gene.range;

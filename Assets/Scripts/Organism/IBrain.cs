@@ -3,6 +3,8 @@ using UnityEngine;
 namespace Organism {
     
     public interface IBrain {
+
+        Gene SelfGene { get; set; }
         OrganismState OrgState {
             get;
             set;

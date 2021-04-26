@@ -43,7 +43,7 @@ namespace Organism {
 
         private void Update() {
             switch (brain.OrgState) {
-                case OrganismState.ATTACKING_FOOD: {
+                case OrganismState.ATTACKING: {
                     if (target != null) {
                         if ((transform.position - target.transform.position).sqrMagnitude < (attackRange*attackRange)) {
                             // Attack logic working
@@ -51,7 +51,7 @@ namespace Organism {
                             //Destroy(target);
                             timeSinceLastAttacked += Time.deltaTime;
                             if (timeSinceLastAttacked > attackGap) {
-                                target.GetComponent<Damageable>().ReceiveDamage(attack);
+                                target.GetComponent<Damageable>().ReceiveDamage(attack, gameObject);
                                 timeSinceLastAttacked = 0f;
                             }
                         } else {
@@ -63,22 +63,6 @@ namespace Organism {
                         brain.OrgState = OrganismState.IDLE;
                     }
                     break;
-                }
-            }
-        }
-
-        IEnumerator DealDamage() {
-            while (true) {
-                if (target != null) {
-                    // if(target.GetComponent<Damageable>().CurrentHP<=0)
-                    // {
-                    //     Destroy(target);
-                    // }else{
-                    // target.GetComponent<Damageable>().ReceiveDamage(attack);
-                    // yield return new WaitForSeconds(2f);
-                    // }
-                    target.GetComponent<Damageable>().ReceiveDamage(attack);
-                    yield return new WaitForSeconds(2f);
                 }
             }
         }
