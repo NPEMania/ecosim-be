@@ -30,9 +30,7 @@ namespace Organism {
 
         private Coroutine staminaRegen;
 
-        private Rigidbody body;
-
-         public void SetupGeneNInitStats(Gene gene) {
+        public void SetupGenes(Gene gene) {
             this.maxStamina=gene.maxStamina;
             this.stamina = maxStamina;
             this.maxHP=gene.maxHP;
@@ -69,28 +67,24 @@ namespace Organism {
         }
 
         void Damageable.ReceiveDamage(float damage) {
-            if(currentHP<=0)
-            {
-            Debug.Log(id + " Deaddddd --- " + damage);
-                  //Destroy(gameObject);
-            }else{
-            currentHP=(currentHP-damage);
-            Debug.Log(id + " Damage --- " + currentHP);
-        }
+            if(currentHP<=0) {
+                Debug.Log(id + " Deaddddd --- " + damage);
+                Destroy(this.gameObject);
+            } else {
+                currentHP=(currentHP-damage);
+                Debug.Log(id + " Damage --- " + currentHP);
+            }
         }
 
         private void Start() {
             objGene=SampleGenes.geneArray[geneId];
-            SetupGeneNInitStats(objGene);
+            SetupGenes(objGene);
             interactor = GetComponent<Interactor>();
             interactor.SetupGene(objGene);
             controller = GetComponent<MovementController>();
             controller.SetupGene(objGene);
             triggerDetector=GetComponent<TriggerDetector>();
             triggerDetector.SetupGene(objGene);
-            body = GetComponent<Rigidbody>();
-            
-            
         }
 
         public void OnStateChanged(OrganismState state) {
@@ -152,6 +146,13 @@ namespace Organism {
                 lastState = state;
                 state = newState;
             }
+        }
+
+        public static IBrain Create(Gene gene, GameObject prefab, Vector3 position, Quaternion rotation) {
+            GameObject org = Instantiate(prefab, position, rotation);
+            IBrain brain = org.GetComponent<IBrain>();
+            brain.SetupGenes(gene);
+            return brain;
         }
     }
 }

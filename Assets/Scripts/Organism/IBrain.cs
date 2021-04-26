@@ -12,6 +12,8 @@ namespace Organism {
             get; set;
         }
 
+        void SetupGenes(Gene gene);
+
         void OnStateChanged(OrganismState newState);
 
         void OnHuntTargetAcquired(GameObject target);
