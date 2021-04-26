@@ -51,4 +51,9 @@ namespace Organism {
             Gizmos.DrawLine(transform.position, transform.position + rightDir * range);
         }
     }
+
+    
+    enum SearchMode {
+        SEARCH_PREY, SEARCH_MATE
+    }
 }

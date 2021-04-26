@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Health;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
@@ -16,12 +17,15 @@ namespace Organism {
         private Damageable damageable;
         private float attackRange=4f;
         private float attack=5f;
+        private float attackGap;
+        private float timeSinceLastAttacked = 0f;
 
         private Coroutine attackCoroutine;
 
-         public void SetupGene(Gene gene) {
+        public void SetupGene(Gene gene) {
             this.attackRange = gene.attackRange;
             this.attack = gene.attack;
+            this.attackGap = gene.attackGap;
         }
 
         void Start() {
@@ -43,11 +47,20 @@ namespace Organism {
                     if (target != null) {
                         if ((transform.position - target.transform.position).sqrMagnitude < (attackRange*attackRange)) {
                             // Attack logic working
-                            if (attackCoroutine == null) attackCoroutine = StartCoroutine(DealDamage());
+                            //if (attackCoroutine == null) attackCoroutine = StartCoroutine(DealDamage());
+                            //Destroy(target);
+                            timeSinceLastAttacked += Time.deltaTime;
+                            if (timeSinceLastAttacked > attackGap) {
+                                target.GetComponent<Damageable>().ReceiveDamage(attack);
+                                timeSinceLastAttacked = 0f;
+                            }
                         } else {
-                            if (attackCoroutine != null) StopCoroutine(attackCoroutine);
+                            //if (attackCoroutine != null) StopCoroutine(attackCoroutine);
                             brain.OnTargetLeftAttackRange(target);
                         }
+                    } else {
+                        Debug.Log("got here");
+                        brain.OrgState = OrganismState.IDLE;
                     }
                     break;
                 }

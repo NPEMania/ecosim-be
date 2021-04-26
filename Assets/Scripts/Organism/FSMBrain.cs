@@ -56,24 +56,33 @@ namespace Organism {
         // float Damageable.MaxHP { get ; set ; }
         // float Damageable.MaxEnergy { get ; set ; }
         // float Damageable.MaxStamina { get ; set ; }
-        float Damageable.Defense { get ; set ; }
-        float Damageable.Attack { get ; set ; }
-        float Damageable.CurrentHP { get {return currentHP;} set{ currentHP=value;} }
-        float Damageable.CurrentEnergy { get ; set ; }
-        float Damageable.CurrentStamina { get ; set ; }
+        public float Defense { get { return objGene.defense; } set {} }
+        public float Attack { get { return objGene.attack; } set {} }
+        public float CurrentHP { get { return currentHP; }
+            set { 
+                currentHP=value;
+                if (currentHP <= 0) {
+                    Destroy(this.gameObject);
+                }
+            }
+        }
+        public float CurrentEnergy { get { return 0; } set {} }
+        public float CurrentStamina { get { return stamina; } set {stamina = value; } }
 
-        void Damageable.DealDamage(Damageable opponent) {
+        public void DealDamage(Damageable opponent) {
             
         }
 
-        void Damageable.ReceiveDamage(float damage) {
-            if(currentHP<=0) {
+        public void ReceiveDamage(float damage) {
+            /*if(currentHP<=0) {
                 Debug.Log(id + " Deaddddd --- " + damage);
                 Destroy(this.gameObject);
             } else {
                 currentHP=(currentHP-damage);
                 Debug.Log(id + " Damage --- " + currentHP);
-            }
+            }*/
+            CurrentHP = CurrentHP - damage * 100 / (100 + objGene.defense);
+            Debug.Log(id + " Damage --- " + currentHP);
         }
 
         private void Start() {
