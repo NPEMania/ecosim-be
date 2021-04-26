@@ -13,12 +13,20 @@ namespace Organism {
         private GameObject target;
 
         private IBrain brain;
+        private Damageable damageable;
+        private float attackRange=4f;
+        private float attack=5f;
 
         private Coroutine attackCoroutine;
 
-        
+         public void SetupGene(Gene gene) {
+            this.attackRange = gene.attackRange;
+            this.attack = gene.attack;
+        }
+
         void Start() {
             brain = GetComponent<IBrain>();
+            damageable=GetComponent<Damageable>();
         }
 
         public void TargetInRange(GameObject target) {
@@ -33,7 +41,7 @@ namespace Organism {
             switch (brain.OrgState) {
                 case OrganismState.ATTACKING_FOOD: {
                     if (target != null) {
-                        if ((transform.position - target.transform.position).sqrMagnitude < 16) {
+                        if ((transform.position - target.transform.position).sqrMagnitude < (attackRange*attackRange)) {
                             // Attack logic working
                             if (attackCoroutine == null) attackCoroutine = StartCoroutine(DealDamage());
                         } else {
@@ -49,7 +57,14 @@ namespace Organism {
         IEnumerator DealDamage() {
             while (true) {
                 if (target != null) {
-                    target.GetComponent<Damageable>().ReceiveDamage(5f);
+                    // if(target.GetComponent<Damageable>().CurrentHP<=0)
+                    // {
+                    //     Destroy(target);
+                    // }else{
+                    // target.GetComponent<Damageable>().ReceiveDamage(attack);
+                    // yield return new WaitForSeconds(2f);
+                    // }
+                    target.GetComponent<Damageable>().ReceiveDamage(attack);
                     yield return new WaitForSeconds(2f);
                 }
             }

@@ -2,9 +2,9 @@ using Health;
 using UnityEngine;
 
 public class Target: MonoBehaviour, Damageable {
-    float Damageable.MaxHP { get ; set ; }
-    float Damageable.MaxEnergy { get ; set ; }
-    float Damageable.MaxStamina { get ; set ; }
+    // float Damageable.MaxHP { get ; set ; }
+    // float Damageable.MaxEnergy { get ; set ; }
+    // float Damageable.MaxStamina { get ; set ; }
     float Damageable.Defense { get ; set ; }
     float Damageable.Attack { get ; set ; }
     float Damageable.CurrentHP { get ; set ; }

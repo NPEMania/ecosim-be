@@ -15,9 +15,11 @@ namespace Organism {
 
         private float range = 10f;
         private float angle = 120f;
+        private float rotSpeed=7f;
 
         private float walkSpeed;
         private float sprintSpeed;
+        private float attackRange=4f;
 
         private Vector3 desiredDir;
 
@@ -37,6 +39,8 @@ namespace Organism {
         public void SetupGene(Gene gene) {
             this.walkSpeed = gene.walkSpeed;
             this.sprintSpeed = gene.sprintSpeed;
+            this.range=gene.range;
+            this.attackRange=gene.attackRange;
         }
 
         private void FixedUpdate() {
@@ -58,15 +62,15 @@ namespace Organism {
             switch (brain.OrgState) {
                 case OrganismState.IDLE: {
                     desiredDir = (desiredDir + GetLevelledDir() * wandering + transform.forward * steering).normalized;
-                    MoveTo(desiredDir.normalized, 5, 7);
+                    MoveTo(desiredDir.normalized, walkSpeed, rotSpeed);
                     break;
                 }
                 case OrganismState.CHASING_FOOD: {
                     if (target != null) {
                         desiredDir = (target.transform.position - transform.position);
                         desiredDir.y = 0f;
-                        if (desiredDir.sqrMagnitude > 16) {
-                            MoveTo(desiredDir.normalized, 10, 7);
+                        if (desiredDir.sqrMagnitude > (attackRange*attackRange)) {
+                            MoveTo(desiredDir.normalized, sprintSpeed, rotSpeed);
                         } else {
                             // Here the body has reached the attack range
                             body.velocity = Vector3.zero;
@@ -115,7 +119,7 @@ namespace Organism {
         private void OnCollisionStay(Collision other) {
             if (other.gameObject.tag == "walls") {
                 desiredDir = other.GetContact(0).normal;
-                MoveTo(desiredDir.normalized, 5f, 7f);
+                MoveTo(desiredDir.normalized, walkSpeed, rotSpeed);
             }
         }
     }

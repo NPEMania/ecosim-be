@@ -11,20 +11,34 @@ namespace Organism {
     class FSMBrain: MonoBehaviour, IBrain, Damageable {
 
         public String id;
-
+        public int geneId;
+        private Gene objGene;
+        private float currentHP;
         private OrganismState state;
         private OrganismState lastState;
         private Interactor interactor;
         private MovementController controller;
         private GameObject target;
 
-        private float stamina = 100f;
+        private TriggerDetector triggerDetector;
 
+        private float stamina = 100f;
+        private float maxStamina = 100f;
+
+        private float maxHP = 100f;
         private float cooldown = 4f;
 
         private Coroutine staminaRegen;
 
         private Rigidbody body;
+
+         public void SetupGeneNInitStats(Gene gene) {
+            this.maxStamina=gene.maxStamina;
+            this.stamina = maxStamina;
+            this.maxHP=gene.maxHP;
+            this.currentHP=maxHP;
+        }
+       
 
         public OrganismState OrgState {
             get { return state; }
@@ -41,12 +55,12 @@ namespace Organism {
             set { velocity = value; }
         }
 
-        float Damageable.MaxHP { get ; set ; }
-        float Damageable.MaxEnergy { get ; set ; }
-        float Damageable.MaxStamina { get ; set ; }
+        // float Damageable.MaxHP { get ; set ; }
+        // float Damageable.MaxEnergy { get ; set ; }
+        // float Damageable.MaxStamina { get ; set ; }
         float Damageable.Defense { get ; set ; }
         float Damageable.Attack { get ; set ; }
-        float Damageable.CurrentHP { get ; set ; }
+        float Damageable.CurrentHP { get {return currentHP;} set{ currentHP=value;} }
         float Damageable.CurrentEnergy { get ; set ; }
         float Damageable.CurrentStamina { get ; set ; }
 
@@ -55,13 +69,28 @@ namespace Organism {
         }
 
         void Damageable.ReceiveDamage(float damage) {
-            Debug.Log(id + " Damage --- " + damage);
+            if(currentHP<=0)
+            {
+            Debug.Log(id + " Deaddddd --- " + damage);
+                  //Destroy(gameObject);
+            }else{
+            currentHP=(currentHP-damage);
+            Debug.Log(id + " Damage --- " + currentHP);
+        }
         }
 
         private void Start() {
+            objGene=SampleGenes.geneArray[geneId];
+            SetupGeneNInitStats(objGene);
             interactor = GetComponent<Interactor>();
+            interactor.SetupGene(objGene);
             controller = GetComponent<MovementController>();
+            controller.SetupGene(objGene);
+            triggerDetector=GetComponent<TriggerDetector>();
+            triggerDetector.SetupGene(objGene);
             body = GetComponent<Rigidbody>();
+            
+            
         }
 
         public void OnStateChanged(OrganismState state) {
@@ -99,18 +128,18 @@ namespace Organism {
         private void Update() {
             switch (OrgState) {
                 case OrganismState.CHASING_FOOD: {
-                    if (velocity.sqrMagnitude > 99f) {
+                    if (velocity.sqrMagnitude > (maxStamina-1)) {
                         Debug.Log("Stamina Depleting");
                         stamina -= Time.deltaTime * 10f;
                     } else {
-                        if (stamina < 100f) {
+                        if (stamina < maxStamina) {
                             stamina += Time.deltaTime * 10f;
                         }
                     }
                     if (stamina < 0) {
                         Debug.Log("Stamina is less than zero");
                         state = OrganismState.REST;
-                    } else if (stamina > 50f) {
+                    } else if (stamina > (maxStamina/2)) {
                         // Should Help restore last state
                     }
                     break;

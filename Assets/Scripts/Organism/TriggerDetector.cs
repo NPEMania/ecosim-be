@@ -10,13 +10,14 @@ namespace Organism {
 
         private float range = 10f;
         private float angle = 120f;
+        private float scale=1f;
 
         private GameObject target;
         private IBrain brain;
 
         private void Start() {
             brain = GetComponent<IBrain>();
-            GetComponent<SphereCollider>().radius = range; // collider.radius = range / scale;
+            GetComponent<SphereCollider>().radius = (range/scale); // collider.radius = range / scale;
         }
 
         private void OnTriggerStay(Collider other) {
@@ -26,6 +27,10 @@ namespace Organism {
                     brain.OnHuntTargetAcquired(other.gameObject);
                 }
             }
+        }
+          public void SetupGene(Gene gene) {
+            this.range=gene.range;
+            this.scale=gene.scale;
         }
 
         private void OnTriggerExit(Collider other) {
