@@ -15,7 +15,7 @@ public class Target: MonoBehaviour, Damageable {
         
     }
 
-    void Damageable.ReceiveDamage(float damage) {
+    void Damageable.ReceiveDamage(float damage, GameObject opponent) {
         Debug.Log("Damage --- " + damage);
     }
 
