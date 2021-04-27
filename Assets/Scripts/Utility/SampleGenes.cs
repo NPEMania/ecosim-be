@@ -14,5 +14,20 @@ namespace Organism {
                 0.4f, 4f
             })
         };
+
+        public static Gene[] mates = new Gene[] {
+            new Gene("mouse", Gender.MALE, new float[] {
+                10f, 120f, 20f, 10f, 
+                50f, 100f, 40f, 10f,
+                1f, 4f, 50f, 1f, 
+                0.2f, 10f
+            }),
+            new Gene("mouse", Gender.FEMALE, new float[] {
+                10f, 120f, 20f, 10f, 
+                50f, 100f, 40f, 10f,
+                1f, 4f, 50f, 1f, 
+                0.2f, 10f
+            }),
+        };
     }
 }

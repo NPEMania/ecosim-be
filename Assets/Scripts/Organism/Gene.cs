@@ -57,5 +57,23 @@ namespace Organism {
             scale = a[11];
             urgeRate = a[12];
         }
+
+        public Gene(string species, Gender gender, float[] a) {
+            this.gender = gender;
+            this.species = species;
+            range = a[0];
+            angle = a[1];
+            sprintSpeed = a[2];
+            walkSpeed = a[3];
+            maxHP = a[4];
+            maxEnergy = a[5];
+            maxStamina = a[6];
+            attack = a[7];
+            attackGap = a[8];
+            attackRange = a[9];
+            defense = a[10];
+            scale = a[11];
+            urgeRate = a[12];
+        }
     }
 }
