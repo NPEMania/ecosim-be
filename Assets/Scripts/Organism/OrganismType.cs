@@ -1,5 +1,5 @@
 namespace Organism {
-    enum OrganismType {
+    public enum OrganismType {
         PLANT, ANIMAL
     }
 }

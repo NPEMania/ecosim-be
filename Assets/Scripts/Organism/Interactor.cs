@@ -1,16 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Health;
-using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 namespace Organism {
 
     // This class will solely use interaction i.e. Attack, reproduce
     public class Interactor: MonoBehaviour {
-
+        public GameObject prefab;
         private GameObject target;
 
         private IBrain brain;
@@ -62,6 +57,9 @@ namespace Organism {
                         Debug.Log("got here");
                         brain.OrgState = OrganismState.IDLE;
                     }
+                    break;
+                }
+                case OrganismState.FITNESS_CHECK: {
                     break;
                 }
             }

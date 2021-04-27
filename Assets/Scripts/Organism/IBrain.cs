@@ -24,6 +24,16 @@ namespace Organism {
 
         void OnMateAcquired(GameObject mate);
 
+        void OnMateLeft();
+
+        void ReceiveMateRequest(GameObject otherMate);
+
+        void ReceiveMateResponse(bool accepted, GameObject otherMate);
+
+        void OnMateInRange(GameObject mate);
+        
+        void OnMateLeftRange(GameObject mate);
+
         void OnTargetInAttackRange(GameObject target);
 
         void OnTargetLeftAttackRange(GameObject target);

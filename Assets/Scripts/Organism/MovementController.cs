@@ -60,6 +60,8 @@ namespace Organism {
             //MoveTo(desiredDir.normalized, 5, 7);
 
             switch (brain.OrgState) {
+                case OrganismState.SEARCHING_MATE:
+                case OrganismState.SEEKING_FOOD:
                 case OrganismState.IDLE: {
                     desiredDir = (desiredDir + GetLevelledDir() * wandering + transform.forward * steering).normalized;
                     MoveTo(desiredDir.normalized, walkSpeed, rotSpeed);
@@ -81,10 +83,33 @@ namespace Organism {
                     }
                     break;
                 }
+                case OrganismState.CHASING_MATE: {
+                    if (target != null) {
+                        desiredDir = (target.transform.position - transform.position);
+                        desiredDir.y = 0f;
+                        if (desiredDir.sqrMagnitude > (attackRange*attackRange)) {
+                            MoveTo(desiredDir.normalized, walkSpeed, rotSpeed);
+                        } else {
+                            // Here the body has reached the attack range
+                            body.velocity = Vector3.zero;
+                            body.angularVelocity = Vector3.zero;
+                            brain.Velocity = Vector3.zero;
+                            brain.OnMateInRange(target);
+                        }
+                    }
+                    break;
+                }
                 case OrganismState.REST: {
                     Debug.Log("REST State");
                     body.velocity = Vector3.zero;
                     body.angularVelocity = Vector3.zero;
+                    break;
+                }
+                case OrganismState.EVADING: {
+                    if (target != null) {
+                        desiredDir = (transform.position - target.transform.position + GetLevelledDir()).normalized;
+                        MoveTo(desiredDir, sprintSpeed, rotSpeed);
+                    }
                     break;
                 }
             }

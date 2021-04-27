@@ -1,10 +1,6 @@
 using UnityEngine;
-using Organism;
-using System.Collections;
 using System;
-using UnityEditorInternal;
 using Health;
-using UnityEngine.Networking.Types;
 
 namespace Organism {
 
@@ -25,9 +21,20 @@ namespace Organism {
         private float currentHP;
         private float energy;
         private float staminaRate = 10f;
-        private float urge = 0f;
+        private float urge = 90f;
         private float timeSinceLastHit = 0f;
         private float timeSinceAlive = 0f;
+        private float attackTimeEstimate = 5f;
+        private int encounters = 0;
+        public int killSuccess = 0;
+
+        public float WinRate {
+            get {
+                if (encounters == 0) return 0;
+                else return killSuccess / encounters;
+            }
+            set {}
+        }
 
         public void SetupGenes(Gene gene) {
             this.stamina = gene.maxStamina;
@@ -64,6 +71,10 @@ namespace Organism {
             set { 
                 currentHP = value;
                 if (currentHP <= 0) {
+                    if (target != null) {
+                        // this means someone killed us
+                        target.GetComponent<FSMBrain>().killSuccess++;
+                    }
                     Destroy(this.gameObject);
                 }
             }
@@ -98,26 +109,37 @@ namespace Organism {
             
         }
 
-        public void ReceiveDamage(float damage, GameObject gameObject) {
+        public void ReceiveDamage(float damage, GameObject opponent) {
             /*if(currentHP<=0) {
                 Debug.Log(id + " Deaddddd --- " + damage);
-                Destroy(this.gameObject);
+                Destroy(this.opponent);
             } else {
                 currentHP=(currentHP-damage);
                 Debug.Log(id + " Damage --- " + currentHP);
             }*/
-            CurrentHP = CurrentHP - damage * 100 / (100 + gene.defense);
+            target = opponent;
+            var effectiveDamage = damage * 100 / (100 + gene.defense);
+            CurrentHP = CurrentHP - effectiveDamage;
             Debug.Log(id + " Damage --- " + currentHP);
             timeSinceLastHit = timeSinceAlive;
-            // TODO: fight or flight criteria
-            // threshold is maybe 0.75f of self health
-            // if my health / energy is greater than threshold, I'll attack
-            // else if my health / energy is less than threshold, but the opponent is prey, I'll attack
-            // else if my health / energy is less than threshold, but opponent is predator, I'll run
+            
+            var other = opponent.GetComponent<Damageable>();
+            if (CurrentHP / gene.maxHP > 0.75f) {
+                // Compare kills (win percent)
+                if (WinRate < opponent.GetComponent<FSMBrain>().WinRate) {
+                    OrgState = OrganismState.EVADING;
+                    controller.UpdateTarget(opponent);
+                } else {
+                    OnHuntTargetAcquired(opponent);
+                }
+            } else {
+                OrgState = OrganismState.EVADING;
+                controller.UpdateTarget(opponent);
+            }
         }
 
         private void Start() {
-            gene=SampleGenes.geneArray[geneId];
+            gene = SampleGenes.mates[geneId];
             SetupGenes(gene);
             interactor = GetComponent<Interactor>();
             interactor.SetupGene(gene);
@@ -125,6 +147,7 @@ namespace Organism {
             controller.SetupGene(gene);
             triggerDetector=GetComponent<TriggerDetector>();
             triggerDetector.SetupGene(gene);
+            OrgState = OrganismState.IDLE;
         }
 
         public void OnStateChanged(OrganismState state) {
@@ -132,6 +155,7 @@ namespace Organism {
         }
 
         public void OnHuntTargetAcquired(GameObject target) {
+            encounters++;
             Debug.Log(id + " Target Got");
             OrgState = OrganismState.CHASING_FOOD;
             controller.UpdateTarget(target);
@@ -144,7 +168,8 @@ namespace Organism {
         }
 
         public void OnMateAcquired(GameObject target) {
-            
+            OrgState = OrganismState.CHASING_MATE;
+            controller.UpdateTarget(target);
         }
 
         public void OnTargetInAttackRange(GameObject target) {
@@ -159,31 +184,15 @@ namespace Organism {
             controller.UpdateTarget(target);
         }
 
+        public void OnMateLeft() {
+
+        }
+
         private void Update() {
 
             // TODO: Deplete Energy on attacking
             UpdateStats();
             DetermineAction();
-
-            switch (OrgState) {
-                case OrganismState.CHASING_FOOD: {
-                    if (velocity.sqrMagnitude > gene.sprintSpeed * gene.sprintSpeed) {
-                        Debug.Log("Stamina Depleting");
-                        stamina -= Time.deltaTime * staminaRate;
-                    } else {
-                        if (stamina < gene.maxStamina) {
-                            stamina += Time.deltaTime * staminaRate;
-                        }
-                    }
-                    if (stamina < 0) {
-                        Debug.Log("Stamina is less than zero");
-                        state = OrganismState.REST;
-                    } else if (stamina > (gene.maxStamina/2)) {
-                        // Should Help restore last state
-                    }
-                    break;
-                }
-            }
         }
 
         private void UpdateStats() {
@@ -202,13 +211,15 @@ namespace Organism {
             if (urge > 100f) {
                 urge = 100f;
             }
+            Debug.Log(gameObject.name + " " + OrgState + " " + CurrentHP + " " + CurrentEnergy + " " + CurrentStamina + " " + urge + " " + gene.gender + " " + WinRate);
         }
 
         private void DetermineAction() {
             if (OrgState != OrganismState.EVADING 
                 || OrgState != OrganismState.CHASING_FOOD
+                || OrgState != OrganismState.CHASING_MATE
                 || OrgState != OrganismState.ATTACKING
-                || OrgState != OrganismState.MATING) {
+                || OrgState != OrganismState.FITNESS_CHECK) {
                 if (CurrentHP < gene.maxHP / 2 || CurrentEnergy < gene.maxEnergy / 2) {
                     OrgState = OrganismState.SEEKING_FOOD;
                 } else if (urge == 100f && (CurrentHP / gene.maxHP) > 0.75f && (CurrentEnergy / gene.maxEnergy) > 0.75f) {
@@ -221,6 +232,7 @@ namespace Organism {
                 if (timeSinceAlive - timeSinceLastHit > gene.evadeCooldown) {
                     // Now probably it is safe, so can go to idle
                     OrgState = OrganismState.IDLE;
+                    controller.UpdateTarget(null);
                 }
             }
         }
@@ -237,6 +249,52 @@ namespace Organism {
             IBrain brain = org.GetComponent<IBrain>();
             brain.SetupGenes(gene);
             return brain;
+        }
+
+        public void OnMateInRange(GameObject mate) {
+            OrgState = OrganismState.FITNESS_CHECK;
+            if (SelfGene.gender == Gender.MALE) {
+                mate.GetComponent<IBrain>().ReceiveMateRequest(this.gameObject);
+            }
+        }
+
+        public void ReceiveMateRequest(GameObject otherMate) {
+            // Request is received by female, so otherMate is male
+            OrgState = OrganismState.FITNESS_CHECK;
+            if (CurrentEnergy / gene.maxEnergy >= 0.75f) {
+                var male = otherMate.GetComponent<IBrain>();
+                if (male.SelfGene.gender == Gender.MALE) {
+                    // Check genes compatibility etc
+                    // Randomly reject
+                    // Reject based on advantage in genes
+                    // Or check successful hunts or evasions if greater than self
+                    // Or randomly check advantage over gene
+                    // kundli system
+                    Debug.Log("Starting a baby");
+                    CurrentEnergy = CurrentEnergy - (CurrentEnergy / 2);
+                    male.ReceiveMateResponse(true, this.gameObject);
+                    var babyGene = Gene.combine(SelfGene, male.SelfGene);
+                    Create(babyGene, interactor.prefab, transform.position + new Vector3(2, 0, 2), transform.rotation);
+                    urge = 0;
+                }
+            } else {
+                otherMate.GetComponent<IBrain>().ReceiveMateResponse(false, this.gameObject);
+                OrgState = OrganismState.IDLE;
+            }
+        }
+
+        public void ReceiveMateResponse(bool accepted, GameObject otherMate) {
+            // Other should be female
+            if (accepted) {
+                CurrentEnergy = CurrentEnergy - (CurrentEnergy / 4);
+                urge = 0;
+            } else {
+                OrgState = OrganismState.IDLE;
+            }
+        }
+
+        public void OnMateLeftRange(GameObject mate) {
+            
         }
     }
 }

@@ -1,14 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEditor;
 using UnityEngine;
+using Organism;
 
 namespace Organism {
     public class Gene {
         public readonly String species;
         public readonly String[] preys; // insert species
         public readonly String[] predators; // insert species
+        public readonly OrganismType organismType;
+        public readonly DietType dietType;
         public readonly Gender gender;
         public readonly float range; // collider.radius = range / scale;
         public readonly float angle;
@@ -34,15 +38,17 @@ namespace Organism {
             };
         }
 
-        public static Gene FromArray(string species, float[] array) {
-            return new Gene(species, array);
+        public static Gene FromArray(string species, OrganismType organismType, DietType diet, float[] array) {
+            return new Gene(species, organismType, diet, array);
         }
 
-        public Gene(string species, float[] a) {
+        public Gene(string species, OrganismType organismType, DietType diet, float[] a) {
             int random = (new System.Random()).Next(0, 2);
             if (random == 0) gender = Gender.MALE;
             else gender = Gender.FEMALE;
             this.species = species;
+            this.organismType = organismType;
+            this.dietType = diet;
             range = a[0];
             angle = a[1];
             sprintSpeed = a[2];
@@ -58,9 +64,11 @@ namespace Organism {
             urgeRate = a[12];
         }
 
-        public Gene(string species, Gender gender, float[] a) {
+        public Gene(string species, Gender gender, OrganismType organismType, DietType diet,  float[] a) {
             this.gender = gender;
             this.species = species;
+            this.organismType = organismType;
+            this.dietType = diet;
             range = a[0];
             angle = a[1];
             sprintSpeed = a[2];
@@ -74,6 +82,16 @@ namespace Organism {
             defense = a[10];
             scale = a[11];
             urgeRate = a[12];
+        }
+
+        public static Gene combine(Gene one, Gene two) {
+            float[] a = one.ToArray();
+            float[] b = two.ToArray();
+            float[] c = new float[a.Length];
+            for (int i = 0; i < c.Length; ++i) {
+                c[i] = (a[i] + b[i]) / 2;
+            }
+            return new Gene(one.species, one.organismType, one.dietType, c);
         }
     }
 }

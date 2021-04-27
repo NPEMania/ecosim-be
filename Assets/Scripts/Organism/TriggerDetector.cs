@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
@@ -10,21 +11,35 @@ namespace Organism {
 
         private float range = 10f;
         private float angle = 120f;
-        private float scale=1f;
+        private float scale = 1f;
 
         private GameObject target;
         private IBrain brain;
 
-        private void Start() {
+        private void Awake() {
             brain = GetComponent<IBrain>();
             GetComponent<SphereCollider>().radius = (range/scale); // collider.radius = range / scale;
         }
 
         private void OnTriggerStay(Collider other) {
-            if (brain.OrgState == OrganismState.SEEKING_FOOD) {
-                // Allow to scan for food targets
-            } else if (brain.OrgState == OrganismState.SEARCHING_MATE) {
-                // Allow to scan mates
+            if (other.gameObject.tag == "mover") {
+                var otherBrain = other.gameObject.GetComponent<IBrain>();
+                if (brain.OrgState == OrganismState.SEEKING_FOOD) {
+                    // Allow to scan for food targets
+                    // Add angle check
+                    // Check if gene is not same
+                    if (brain.SelfGene.species != otherBrain.SelfGene.species) {
+                        brain.OnHuntTargetAcquired(other.gameObject);
+                    }
+                } else if (brain.OrgState == OrganismState.SEARCHING_MATE) {
+                    // Allow to scan mates
+                
+                    if (otherBrain.SelfGene.species == brain.SelfGene.species
+                        && otherBrain.SelfGene.gender != brain.SelfGene.gender
+                        && otherBrain.OrgState == OrganismState.SEARCHING_MATE) {
+                        brain.OnMateAcquired(other.gameObject);
+                    }
+                }
             }
             /*if (other.gameObject.tag == "mover") {
                 if (other.gameObject != target) {
@@ -33,17 +48,23 @@ namespace Organism {
                 }
             }*/
         }
-          public void SetupGene(Gene gene) {
+        public void SetupGene(Gene gene) {
             this.range=gene.range;
             this.scale=gene.scale;
+            GetComponent<SphereCollider>().radius = (range/scale);
         }
 
         private void OnTriggerExit(Collider other) {
-            if (other.gameObject == target) {
+            if (brain.OrgState == OrganismState.SEEKING_FOOD) {
+                // Allow to scan for food targets
+            } else if (brain.OrgState == OrganismState.SEARCHING_MATE) {
+                // Allow to scan mates
+            }
+            /*if (other.gameObject == target) {
                 Debug.Log("Trigger Detector");
                 brain.OnHuntTargetLeft(other.gameObject);
                 target = null;
-            }
+            }*/
         }
 
         
