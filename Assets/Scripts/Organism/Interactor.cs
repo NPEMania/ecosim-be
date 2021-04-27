@@ -39,17 +39,21 @@ namespace Organism {
         private void Update() {
             switch (brain.OrgState) {
                 case OrganismState.ATTACKING: {
+                    Debug.Log("target is null " + (target == null));
                     if (target != null) {
                         if ((transform.position - target.transform.position).sqrMagnitude < (attackRange*attackRange)) {
                             // Attack logic working
                             //if (attackCoroutine == null) attackCoroutine = StartCoroutine(DealDamage());
                             //Destroy(target);
+                            Debug.Log("target in range");
                             timeSinceLastAttacked += Time.deltaTime;
                             if (timeSinceLastAttacked > attackGap) {
+                                Debug.Log("attacking target");
                                 target.GetComponent<Damageable>().ReceiveDamage(attack, gameObject);
                                 timeSinceLastAttacked = 0f;
                             }
                         } else {
+                            Debug.Log("target out of range");
                             //if (attackCoroutine != null) StopCoroutine(attackCoroutine);
                             brain.OnTargetLeftAttackRange(target);
                         }

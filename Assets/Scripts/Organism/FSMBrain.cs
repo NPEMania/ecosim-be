@@ -21,7 +21,7 @@ namespace Organism {
         private float currentHP;
         private float energy;
         private float staminaRate = 10f;
-        private float urge = 90f;
+        private float urge = 0f;
         private float timeSinceLastHit = 0f;
         private float timeSinceAlive = 0f;
         private float attackTimeEstimate = 5f;
@@ -139,7 +139,7 @@ namespace Organism {
         }
 
         private void Start() {
-            gene = SampleGenes.mates[geneId];
+            gene = SampleGenes.geneArray[geneId];
             SetupGenes(gene);
             interactor = GetComponent<Interactor>();
             interactor.SetupGene(gene);
@@ -148,6 +148,7 @@ namespace Organism {
             triggerDetector=GetComponent<TriggerDetector>();
             triggerDetector.SetupGene(gene);
             OrgState = OrganismState.IDLE;
+            transform.localScale = new Vector3(gene.scale, gene.scale, gene.scale);
         }
 
         public void OnStateChanged(OrganismState state) {
@@ -173,7 +174,7 @@ namespace Organism {
         }
 
         public void OnTargetInAttackRange(GameObject target) {
-            if (this.target != target) this.target = target;
+            // if (this.target != target) this.target = target;
             OrgState = OrganismState.ATTACKING;
             interactor.TargetInRange(target);
         }
@@ -211,7 +212,7 @@ namespace Organism {
             if (urge > 100f) {
                 urge = 100f;
             }
-            Debug.Log(gameObject.name + " " + OrgState + " " + CurrentHP + " " + CurrentEnergy + " " + CurrentStamina + " " + urge + " " + gene.gender + " " + WinRate);
+            //Debug.Log(gene.species + " " + gameObject.name + " " + OrgState + " " + CurrentHP + " " + CurrentEnergy + " " + CurrentStamina + " " + urge + " " + gene.gender + " " + WinRate);
         }
 
         private void DetermineAction() {
@@ -221,8 +222,10 @@ namespace Organism {
                 || OrgState != OrganismState.ATTACKING
                 || OrgState != OrganismState.FITNESS_CHECK) {
                 if (CurrentHP < gene.maxHP / 2 || CurrentEnergy < gene.maxEnergy / 2) {
+                    Debug.Log(gene.species + " now hungry");
                     OrgState = OrganismState.SEEKING_FOOD;
                 } else if (urge == 100f && (CurrentHP / gene.maxHP) > 0.75f && (CurrentEnergy / gene.maxEnergy) > 0.75f) {
+                    Debug.Log(gene.species + " now horny");
                     OrgState = OrganismState.SEARCHING_MATE;
                 }   
             } else if (OrgState == OrganismState.EVADING) {
