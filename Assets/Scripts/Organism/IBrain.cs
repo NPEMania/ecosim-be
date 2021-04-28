@@ -37,5 +37,7 @@ namespace Organism {
         void OnTargetInAttackRange(GameObject target);
 
         void OnTargetLeftAttackRange(GameObject target);
+
+        void RegisterKill(Gene gene);
     }
 }

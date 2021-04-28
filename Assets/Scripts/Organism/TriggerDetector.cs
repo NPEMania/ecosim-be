@@ -14,6 +14,7 @@ namespace Organism {
         private float scale = 1f;
 
         private GameObject target;
+        private GameObject mate;
         private IBrain brain;
 
         private void Awake() {
@@ -70,11 +71,11 @@ namespace Organism {
         
         private void OnDrawGizmos() {
             Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(transform.position, transform.position + transform.forward * range);
+            Gizmos.DrawLine(transform.position, transform.position + transform.forward * range / scale);
             var leftDir = - Mathf.Sin(angle * Mathf.Deg2Rad / 2f) * transform.right + Mathf.Cos(angle * Mathf.Deg2Rad / 2f) * transform.forward;
             var rightDir = Mathf.Sin(angle * Mathf.Deg2Rad / 2f) * transform.right + Mathf.Cos(angle * Mathf.Deg2Rad / 2f) * transform.forward;
-            Gizmos.DrawLine(transform.position, transform.position + leftDir * range);
-            Gizmos.DrawLine(transform.position, transform.position + rightDir * range);
+            Gizmos.DrawLine(transform.position, transform.position + leftDir * range / scale);
+            Gizmos.DrawLine(transform.position, transform.position + rightDir * range / scale);
         }
     }
 

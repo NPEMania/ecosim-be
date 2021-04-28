@@ -71,7 +71,9 @@ namespace Organism {
                     if (target != null) {
                         desiredDir = (target.transform.position - transform.position);
                         desiredDir.y = 0f;
-                        if (desiredDir.sqrMagnitude > (attackRange*attackRange)) {
+                        if (desiredDir.sqrMagnitude > (range * range * 4)) {
+                            brain.OnHuntTargetLeft(target);
+                        } else if (desiredDir.sqrMagnitude > (attackRange*attackRange)) {
                             MoveTo(desiredDir.normalized, sprintSpeed, rotSpeed);
                         } else {
                             // Here the body has reached the attack range
@@ -106,13 +108,16 @@ namespace Organism {
                     break;
                 }
                 case OrganismState.EVADING: {
-                    if (target != null) {
-                        desiredDir = (transform.position - target.transform.position + GetLevelledDir()).normalized;
-                        MoveTo(desiredDir, sprintSpeed, rotSpeed);
-                    }
+                    desiredDir = (desiredDir + GetLevelledDir() * wandering + transform.forward * steering).normalized;
+                    MoveTo(desiredDir, sprintSpeed, rotSpeed);
                     break;
                 }
             }
+        }
+
+        public void StartEvasion(GameObject target) {
+            desiredDir = Quaternion.AngleAxis(120, transform.up) * desiredDir;
+            body.MoveRotation(Quaternion.LookRotation(desiredDir));
         }
 
         private void UnTopple() {

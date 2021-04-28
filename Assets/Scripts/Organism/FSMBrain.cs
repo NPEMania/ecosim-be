@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using Health;
+using JetBrains.Annotations;
 
 namespace Organism {
 
@@ -24,7 +25,6 @@ namespace Organism {
         private float urge = 0f;
         private float timeSinceLastHit = 0f;
         private float timeSinceAlive = 0f;
-        private float attackTimeEstimate = 5f;
         private int encounters = 0;
         public int killSuccess = 0;
 
@@ -73,7 +73,7 @@ namespace Organism {
                 if (currentHP <= 0) {
                     if (target != null) {
                         // this means someone killed us
-                        target.GetComponent<FSMBrain>().killSuccess++;
+                        target.GetComponent<IBrain>().RegisterKill(gene);
                     }
                     Destroy(this.gameObject);
                 }
@@ -110,17 +110,10 @@ namespace Organism {
         }
 
         public void ReceiveDamage(float damage, GameObject opponent) {
-            /*if(currentHP<=0) {
-                Debug.Log(id + " Deaddddd --- " + damage);
-                Destroy(this.opponent);
-            } else {
-                currentHP=(currentHP-damage);
-                Debug.Log(id + " Damage --- " + currentHP);
-            }*/
             target = opponent;
             var effectiveDamage = damage * 100 / (100 + gene.defense);
             CurrentHP = CurrentHP - effectiveDamage;
-            Debug.Log(id + " Damage --- " + currentHP);
+            //Debug.Log(id + " Damage --- " + currentHP);
             timeSinceLastHit = timeSinceAlive;
             
             var other = opponent.GetComponent<Damageable>();
@@ -134,8 +127,14 @@ namespace Organism {
                 }
             } else {
                 OrgState = OrganismState.EVADING;
-                controller.UpdateTarget(opponent);
+                controller.StartEvasion(opponent);
             }
+        }
+
+        public void RegisterKill(Gene killedGene) {
+            ++killSuccess;
+            CurrentHP += killedGene.scale * 10;
+            //Have to choose next state
         }
 
         private void Start() {
@@ -147,7 +146,7 @@ namespace Organism {
             controller.SetupGene(gene);
             triggerDetector=GetComponent<TriggerDetector>();
             triggerDetector.SetupGene(gene);
-            OrgState = OrganismState.IDLE;
+            OrgState = OrganismState.SEEKING_FOOD;
             transform.localScale = new Vector3(gene.scale, gene.scale, gene.scale);
         }
 
@@ -157,7 +156,7 @@ namespace Organism {
 
         public void OnHuntTargetAcquired(GameObject target) {
             encounters++;
-            Debug.Log(id + " Target Got");
+            //Debug.Log(id + " Target Got");
             OrgState = OrganismState.CHASING_FOOD;
             controller.UpdateTarget(target);
         }
@@ -222,18 +221,18 @@ namespace Organism {
                 || OrgState != OrganismState.ATTACKING
                 || OrgState != OrganismState.FITNESS_CHECK) {
                 if (CurrentHP < gene.maxHP / 2 || CurrentEnergy < gene.maxEnergy / 2) {
-                    Debug.Log(gene.species + " now hungry");
                     OrgState = OrganismState.SEEKING_FOOD;
                 } else if (urge == 100f && (CurrentHP / gene.maxHP) > 0.75f && (CurrentEnergy / gene.maxEnergy) > 0.75f) {
-                    Debug.Log(gene.species + " now horny");
                     OrgState = OrganismState.SEARCHING_MATE;
                 }   
             } else if (OrgState == OrganismState.EVADING) {
+                Debug.Log(gene.species + " " + gameObject.name +  " evade brain block");
                 //TODO: Use some way to determine if this is safe
                 // Maybe timeout after last received damage (Health was depleted long ago)
                 // Maybe chaser exiting collider
                 if (timeSinceAlive - timeSinceLastHit > gene.evadeCooldown) {
                     // Now probably it is safe, so can go to idle
+                    Debug.Log(gene.species + " " + gameObject.name +  " is ending evade");
                     OrgState = OrganismState.IDLE;
                     controller.UpdateTarget(null);
                 }
