@@ -77,6 +77,7 @@ namespace Organism {
                     }
                     Destroy(this.gameObject);
                 }
+                if (currentHP > gene.maxHP) currentHP = gene.maxHP;
             }
         }
         public float CurrentEnergy { get { return energy; } 
@@ -119,6 +120,7 @@ namespace Organism {
             var other = opponent.GetComponent<Damageable>();
             if (CurrentHP / gene.maxHP > 0.75f) {
                 // Compare kills (win percent)
+                // TODO: predator prey in gene can be used
                 if (WinRate < opponent.GetComponent<FSMBrain>().WinRate) {
                     OrgState = OrganismState.EVADING;
                     controller.UpdateTarget(opponent);
@@ -133,7 +135,11 @@ namespace Organism {
 
         public void RegisterKill(Gene killedGene) {
             ++killSuccess;
-            CurrentHP += killedGene.scale * 10;
+            //CurrentHP += killedGene.scale * 10;
+            if (UtilityMethods.IsEdible(gene, killedGene)) {
+                CurrentHP += killedGene.maxHP * 0.9f;
+                CurrentEnergy += killedGene.maxEnergy * 0.9f;
+            }
             //Have to choose next state
         }
 
@@ -156,7 +162,7 @@ namespace Organism {
 
         public void OnHuntTargetAcquired(GameObject target) {
             encounters++;
-            //Debug.Log(id + " Target Got");
+            Debug.Log(id + " Target Got");
             OrgState = OrganismState.CHASING_FOOD;
             controller.UpdateTarget(target);
         }
@@ -211,7 +217,7 @@ namespace Organism {
             if (urge > 100f) {
                 urge = 100f;
             }
-            //Debug.Log(gene.species + " " + gameObject.name + " " + OrgState + " " + CurrentHP + " " + CurrentEnergy + " " + CurrentStamina + " " + urge + " " + gene.gender + " " + WinRate);
+            Debug.Log(gene.species + " " + gameObject.name + " " + OrgState + " " + CurrentHP + " " + CurrentEnergy + " " + CurrentStamina + " " + urge + " " + gene.gender + " " + WinRate);
         }
 
         private void DetermineAction() {

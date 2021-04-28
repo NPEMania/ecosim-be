@@ -28,13 +28,14 @@ namespace Organism {
         public readonly float scale;
         public readonly float urgeRate;
         public readonly float evadeCooldown; // In seconds;
+        public readonly float lifespan;
 
         public float[] ToArray() {
             return new float[] {
                 range, angle, sprintSpeed, walkSpeed, 
                 maxHP, maxEnergy, maxStamina, attack,
                 attackGap, attackRange, defense, scale,
-                urgeRate
+                urgeRate, evadeCooldown, lifespan
             };
         }
 
@@ -62,6 +63,8 @@ namespace Organism {
             defense = a[10];
             scale = a[11];
             urgeRate = a[12];
+            evadeCooldown = a[13];
+            lifespan = a[14];
         }
 
         public Gene(string species, Gender gender, OrganismType organismType, DietType diet,  float[] a) {
@@ -82,6 +85,8 @@ namespace Organism {
             defense = a[10];
             scale = a[11];
             urgeRate = a[12];
+            evadeCooldown = a[13];
+            lifespan = a[14];
         }
 
         public static Gene combine(Gene one, Gene two) {

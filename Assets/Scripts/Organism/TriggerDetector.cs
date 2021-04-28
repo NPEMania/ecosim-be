@@ -23,13 +23,14 @@ namespace Organism {
         }
 
         private void OnTriggerStay(Collider other) {
-            if (other.gameObject.tag == "mover") {
+            //Debug.Log(brain.SelfGene.species + " " + brain.OrgState + " " + other.gameObject.name);
+            if (other.gameObject.tag == "organism") {
                 var otherBrain = other.gameObject.GetComponent<IBrain>();
                 if (brain.OrgState == OrganismState.SEEKING_FOOD) {
                     // Allow to scan for food targets
                     // Add angle check
                     // Check if gene is not same
-                    if (brain.SelfGene.species != otherBrain.SelfGene.species) {
+                    if (brain.SelfGene.species != otherBrain.SelfGene.species && UtilityMethods.IsEdible(brain.SelfGene, otherBrain.SelfGene)) {
                         brain.OnHuntTargetAcquired(other.gameObject);
                     }
                 } else if (brain.OrgState == OrganismState.SEARCHING_MATE) {
@@ -71,11 +72,11 @@ namespace Organism {
         
         private void OnDrawGizmos() {
             Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(transform.position, transform.position + transform.forward * range / scale);
+            Gizmos.DrawLine(transform.position, transform.position + transform.forward * range);
             var leftDir = - Mathf.Sin(angle * Mathf.Deg2Rad / 2f) * transform.right + Mathf.Cos(angle * Mathf.Deg2Rad / 2f) * transform.forward;
             var rightDir = Mathf.Sin(angle * Mathf.Deg2Rad / 2f) * transform.right + Mathf.Cos(angle * Mathf.Deg2Rad / 2f) * transform.forward;
-            Gizmos.DrawLine(transform.position, transform.position + leftDir * range / scale);
-            Gizmos.DrawLine(transform.position, transform.position + rightDir * range / scale);
+            Gizmos.DrawLine(transform.position, transform.position + leftDir * range);
+            Gizmos.DrawLine(transform.position, transform.position + rightDir * range);
         }
     }
 
