@@ -242,6 +242,11 @@ namespace Organism {
                     OrgState = OrganismState.IDLE;
                     controller.UpdateTarget(null);
                 }
+            } else if (OrgState == OrganismState.REST) {
+                // Check day and night and rest accordingly
+                if (CurrentStamina / gene.maxStamina > 0.75f) {
+                    OrgState = OrganismState.IDLE;
+                }
             }
         }
 
