@@ -1,5 +1,5 @@
-using System;
 using Organism;
+using UnityEngine;
 
 class UtilityMethods {
 
@@ -13,5 +13,10 @@ class UtilityMethods {
             return true;
         }
         return false;
+    }
+
+    public static Vector3 OnUnitCircle() {
+        Vector2 circle = Random.insideUnitCircle.normalized;
+        return new Vector3(circle.x, 0, circle.y);
     }
 }

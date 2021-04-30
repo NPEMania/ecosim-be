@@ -9,6 +9,8 @@ namespace Organism {
     public class PlantBrain : MonoBehaviour, IBrain, Damageable {
 
         public GameObject prefab;
+        private DayNightCycle cycle;
+        private Environment environment;
         private float currentHP;
         private Gene gene;
         private OrganismState state;
@@ -31,8 +33,17 @@ namespace Organism {
                 if (currentHP > gene.maxHP) currentHP = gene.maxHP;
             }
         }
-        public float CurrentEnergy { get { return 0; }  set {}  }
+
+        private float currentEnergy;
+        public float CurrentEnergy { get { return currentEnergy; }
+            set {
+                currentEnergy = value; 
+            }
+        }
         public float CurrentStamina { get { return 0; }  set {}  }
+
+        private float urge = 0;
+        private float timeSinceAlive = 0f;
 
         public void DealDamage(Damageable opponent){
             
@@ -73,6 +84,10 @@ namespace Organism {
         private void Start() {
             gene = SampleGenes.plantGene;
             SetupGene(gene);
+            cycle = FindObjectOfType<DayNightCycle>();
+            environment = FindObjectOfType<Environment>();
+            timeSinceAlive = Time.time;
+            transform.localScale = new Vector3(gene.scale, gene.scale, gene.scale);
         }
 
         private void SetupGene(Gene gene) {
@@ -80,7 +95,27 @@ namespace Organism {
         }
 
         private void Update() {
-            
+            timeSinceAlive += Time.deltaTime;
+            Debug.Log(gameObject.name + " " + timeSinceAlive + " " + gene.lifespan);
+            if (timeSinceAlive > gene.lifespan) {
+                Debug.Log("Destroying");
+                Destroy(gameObject);
+            }
+            if (cycle != null) {
+                if (cycle.TimeOfDay > 6.5 && cycle.TimeOfDay < 18.75) {
+                    urge += Time.deltaTime * gene.urgeRate;
+                    if (urge > 100) {
+                        Debug.Log("Spawning new plant");
+                        environment.SpawnPlant(transform.position, gene);
+                        urge = 0;
+                    }
+                } else {
+                    urge -= Time.deltaTime * gene.urgeRate;
+                    if (urge < 0) {
+                        urge = 0;
+                    }
+                }
+            }
         }
 
         public static IBrain Create(Gene gene, GameObject prefab, Vector3 position, Quaternion rotation) {

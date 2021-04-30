@@ -7,6 +7,7 @@ using UnityEngine;
 using Organism;
 
 namespace Organism {
+    [Serializable]
     public class Gene {
         public readonly String species;
         public readonly String[] preys; // insert species
@@ -97,6 +98,10 @@ namespace Organism {
                 c[i] = (a[i] + b[i]) / 2;
             }
             return new Gene(one.species, one.organismType, one.dietType, c);
+        }
+
+        public void mutate() {
+
         }
     }
 }

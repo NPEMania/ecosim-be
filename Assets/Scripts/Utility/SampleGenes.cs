@@ -36,7 +36,7 @@ namespace Organism {
                 0f, 0f, 0f, 0f, 
                 50f, 50f, 0f, 0f,
                 0f, 0f, 50f, 2f,
-                0f, 0f, 120f
+                10f, 0f, 70f
         });
     }
 }
