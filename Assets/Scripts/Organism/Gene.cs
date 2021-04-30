@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using UnityEditor;
 using UnityEngine;
 using Organism;
+using JetBrains.Annotations;
 
 namespace Organism {
     [Serializable]
@@ -90,18 +91,24 @@ namespace Organism {
             lifespan = a[14];
         }
 
-        public static Gene combine(Gene one, Gene two) {
+        // mutation between 0 to 99
+        public static Gene combine(Gene one, Gene two, float mutation) {
             float[] a = one.ToArray();
             float[] b = two.ToArray();
             float[] c = new float[a.Length];
             for (int i = 0; i < c.Length; ++i) {
-                c[i] = (a[i] + b[i]) / 2;
+                c[i] = (a[i] + b[i]) / 2 * (1 + UnityEngine.Random.Range(-mutation, mutation) / 100);
             }
             return new Gene(one.species, one.organismType, one.dietType, c);
         }
 
-        public void mutate() {
-
+        public Gene mutate(float mutation) {
+            float[] a = ToArray();
+            float[] b = new float[a.Length];
+            for (int i = 0; i < a.Length; ++i) {
+                b[i] = a[i] * (1 + UnityEngine.Random.Range(-mutation, mutation) / 100);
+            }
+            return new Gene(species, organismType, dietType, b);
         }
     }
 }

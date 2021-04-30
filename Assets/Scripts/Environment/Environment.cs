@@ -5,6 +5,7 @@ using UnityEngine;
 public class Environment : MonoBehaviour {
 
     public GameObject plantPrefab;
+    [Range(0, 20)] public float mutation;
 
     private void Start() {
         //SpawnPlant(Vector3.zero, SampleGenes.plantGene);

@@ -27,6 +27,7 @@ namespace Organism {
         private float timeSinceAlive = 0f;
         private int encounters = 0;
         public int killSuccess = 0;
+        private Environment environment;
 
         public float WinRate {
             get {
@@ -134,7 +135,9 @@ namespace Organism {
         }
 
         public void RegisterKill(Gene killedGene) {
-            ++killSuccess;
+            if (killedGene.organismType == OrganismType.ANIMAL) {
+                ++killSuccess;
+            }
             //CurrentHP += killedGene.scale * 10;
             if (UtilityMethods.IsEdible(gene, killedGene)) {
                 CurrentHP += killedGene.maxHP * 0.9f;
@@ -154,6 +157,7 @@ namespace Organism {
             triggerDetector.SetupGene(gene);
             OrgState = OrganismState.SEEKING_FOOD;
             transform.localScale = new Vector3(gene.scale, gene.scale, gene.scale);
+            environment = FindObjectOfType<Environment>();
         }
 
         public void OnStateChanged(OrganismState state) {
@@ -286,7 +290,7 @@ namespace Organism {
                     Debug.Log("Starting a baby");
                     CurrentEnergy = CurrentEnergy - (CurrentEnergy / 2);
                     male.ReceiveMateResponse(true, this.gameObject);
-                    var babyGene = Gene.combine(SelfGene, male.SelfGene);
+                    var babyGene = Gene.combine(SelfGene, male.SelfGene, environment.mutation);
                     Create(babyGene, interactor.prefab, transform.position + new Vector3(2, 0, 2), transform.rotation);
                     urge = 0;
                 }

@@ -714,6 +714,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   plantPrefab: {fileID: 6794947692962672342, guid: cbb6b5ec8d863fb4893eae38fa4b62ad, type: 3}
+  mutation: 3.8
 --- !u!4 &1486678225
 Transform:
   m_ObjectHideFlags: 0
