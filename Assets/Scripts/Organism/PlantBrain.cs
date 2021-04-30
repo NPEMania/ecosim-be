@@ -44,6 +44,7 @@ namespace Organism {
 
         private float urge = 0;
         private float timeSinceAlive = 0f;
+        private float creationTime;
 
         public void DealDamage(Damageable opponent){
             
@@ -86,7 +87,7 @@ namespace Organism {
             SetupGene(gene);
             cycle = FindObjectOfType<DayNightCycle>();
             environment = FindObjectOfType<Environment>();
-            timeSinceAlive = Time.time;
+            timeSinceAlive = 0f;
             transform.localScale = new Vector3(gene.scale, gene.scale, gene.scale);
         }
 
@@ -96,9 +97,9 @@ namespace Organism {
 
         private void Update() {
             timeSinceAlive += Time.deltaTime;
-            Debug.Log(gameObject.name + " " + timeSinceAlive + " " + gene.lifespan);
+            //Debug.Log(gameObject.name + " " + timeSinceAlive + " " + gene.lifespan);
             if (timeSinceAlive > gene.lifespan) {
-                Debug.Log("Destroying");
+                Debug.Log(gameObject.name + " Destroying");
                 Destroy(gameObject);
             }
             if (cycle != null) {
