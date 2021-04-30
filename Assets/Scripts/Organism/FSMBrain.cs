@@ -5,10 +5,10 @@ using JetBrains.Annotations;
 
 namespace Organism {
 
-    class FSMBrain: MonoBehaviour, IBrain, Damageable {
+    public class FSMBrain: MonoBehaviour, IBrain, Damageable {
 
         public String id;
-        public int geneId;
+        public int gen;
         public Gene gene;
         private OrganismState state;
         private OrganismState lastState;
@@ -24,9 +24,11 @@ namespace Organism {
         private float staminaRate = 10f;
         private float urge = 0f;
         private float timeSinceLastHit = 0f;
-        private float timeSinceAlive = 0f;
-        private int encounters = 0;
+        public float timeSinceAlive = 0f;
+        public int encounters = 0;
         public int killSuccess = 0;
+        public int evasions = 0;
+        public String causeOfDeath;
         private Environment environment;
 
         public float WinRate {
@@ -38,9 +40,21 @@ namespace Organism {
         }
 
         public void SetupGenes(Gene gene) {
+            Debug.Log("gene is null " + (gene == null));
             this.stamina = gene.maxStamina;
             this.currentHP = gene.maxHP;
             this.energy = gene.maxEnergy;
+            interactor.SetupGene(gene);
+            controller.SetupGene(gene);
+            triggerDetector.SetupGene(gene);
+        }
+
+        public void SetGeneration(int gen) {
+            this.gen = gen;
+        }
+
+        public int GetGeneration() {
+            return gen;
         }
 
         public Gene SelfGene {
@@ -73,9 +87,13 @@ namespace Organism {
                 currentHP = value;
                 if (currentHP <= 0) {
                     if (target != null) {
+                        causeOfDeath = "killed";
                         // this means someone killed us
                         target.GetComponent<IBrain>().RegisterKill(gene);
+                    } else {
+                        causeOfDeath = "health-depleted";
                     }
+                    environment.RegisterDeath(new OrganismExportData(gene, this));
                     Destroy(this.gameObject);
                 }
                 if (currentHP > gene.maxHP) currentHP = gene.maxHP;
@@ -146,16 +164,14 @@ namespace Organism {
             //Have to choose next state
         }
 
-        private void Start() {
-            gene = SampleGenes.geneArray[geneId];
-            SetupGenes(gene);
+        private void Awake() {
             interactor = GetComponent<Interactor>();
-            interactor.SetupGene(gene);
+            
             controller = GetComponent<MovementController>();
-            controller.SetupGene(gene);
+            
             triggerDetector=GetComponent<TriggerDetector>();
-            triggerDetector.SetupGene(gene);
-            OrgState = OrganismState.SEEKING_FOOD;
+            
+            OrgState = OrganismState.IDLE;
             transform.localScale = new Vector3(gene.scale, gene.scale, gene.scale);
             environment = FindObjectOfType<Environment>();
         }
@@ -165,7 +181,9 @@ namespace Organism {
         }
 
         public void OnHuntTargetAcquired(GameObject target) {
-            encounters++;
+            if (target.GetComponent<IBrain>().SelfGene.organismType == OrganismType.ANIMAL) {
+                encounters++;
+            }
             Debug.Log(id + " Target Got");
             OrgState = OrganismState.CHASING_FOOD;
             controller.UpdateTarget(target);
@@ -199,7 +217,7 @@ namespace Organism {
         }
 
         private void Update() {
-
+            
             // TODO: Deplete Energy on attacking
             UpdateStats();
             DetermineAction();
@@ -207,6 +225,11 @@ namespace Organism {
 
         private void UpdateStats() {
             timeSinceAlive += Time.deltaTime;
+            if (timeSinceAlive > gene.lifespan) {
+                causeOfDeath = "lifespan";
+                environment.RegisterDeath(new OrganismExportData(gene, this));
+                Destroy(this.gameObject);
+            }
             if (OrgState != OrganismState.REST) {
                 CurrentEnergy = CurrentEnergy - Time.deltaTime;
             }
@@ -221,7 +244,7 @@ namespace Organism {
             if (urge > 100f) {
                 urge = 100f;
             }
-            Debug.Log(gene.species + " " + gameObject.name + " " + OrgState + " " + CurrentHP + " " + CurrentEnergy + " " + CurrentStamina + " " + urge + " " + gene.gender + " " + WinRate);
+            //Debug.Log(gene.species + " " + gameObject.name + " " + OrgState + " " + CurrentHP + " " + CurrentEnergy + " " + CurrentStamina + " " + urge + " " + gene.gender + " " + WinRate);
         }
 
         private void DetermineAction() {
@@ -242,6 +265,7 @@ namespace Organism {
                 // Maybe chaser exiting collider
                 if (timeSinceAlive - timeSinceLastHit > gene.evadeCooldown) {
                     // Now probably it is safe, so can go to idle
+                    ++evasions;
                     Debug.Log(gene.species + " " + gameObject.name +  " is ending evade");
                     OrgState = OrganismState.IDLE;
                     controller.UpdateTarget(null);
@@ -261,10 +285,12 @@ namespace Organism {
             }
         }
 
-        public static IBrain Create(Gene gene, GameObject prefab, Vector3 position, Quaternion rotation) {
+        public static IBrain Create(Gene gene, GameObject prefab, Vector3 position, Quaternion rotation, int gen) {
+            Debug.Log("spawning ");
             GameObject org = Instantiate(prefab, position, rotation);
             IBrain brain = org.GetComponent<IBrain>();
             brain.SetupGenes(gene);
+            brain.SetGeneration(gen);
             return brain;
         }
 
@@ -286,12 +312,12 @@ namespace Organism {
                     // Reject based on advantage in genes
                     // Or check successful hunts or evasions if greater than self
                     // Or randomly check advantage over gene
-                    // kundli system
                     Debug.Log("Starting a baby");
                     CurrentEnergy = CurrentEnergy - (CurrentEnergy / 2);
                     male.ReceiveMateResponse(true, this.gameObject);
                     var babyGene = Gene.combine(SelfGene, male.SelfGene, environment.mutation);
-                    Create(babyGene, interactor.prefab, transform.position + new Vector3(2, 0, 2), transform.rotation);
+                    var nextGen = ((gen > male.GetGeneration()) ? gen : male.GetGeneration()) + 1;
+                    Create(babyGene, interactor.prefab, transform.position + new Vector3(2, 0, 2), transform.rotation, nextGen);
                     urge = 0;
                 }
             } else {

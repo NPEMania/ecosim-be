@@ -14,13 +14,13 @@ public class HealthBarManager : MonoBehaviour {
     public Slider hp;
     public Slider energy;
     public Slider stamina;
-    public Camera camera;
+    public Camera sceneCamera;
     public Canvas canvas;
     void Start() {
         brain = GetComponent<IBrain>();
         species.text = brain.SelfGene.species;
         self = GetComponent<Damageable>();
-        camera = Camera.main;
+        sceneCamera = Camera.main;
     }
 
     void Update() {
@@ -29,6 +29,6 @@ public class HealthBarManager : MonoBehaviour {
         hp.value = self.CurrentHP / brain.SelfGene.maxHP;
         energy.value = self.CurrentEnergy / brain.SelfGene.maxEnergy;
         stamina.value = self.CurrentStamina / brain.SelfGene.maxStamina;
-        canvas.transform.LookAt(camera.transform.position);
+        canvas.transform.LookAt(sceneCamera.transform.position);
     }
 }

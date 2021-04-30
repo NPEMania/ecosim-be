@@ -110,5 +110,61 @@ namespace Organism {
             }
             return new Gene(species, organismType, dietType, b);
         }
+
+        public Gene(GeneInput input) {
+            int random = (new System.Random()).Next(0, 2);
+            if (random == 0) gender = Gender.MALE;
+            else gender = Gender.FEMALE;
+            this.species = input.species;
+            Debug.Log("from gene input " + input.species);
+            this.organismType = input.organismType;
+            this.dietType = input.dietType;
+            range = input.range;
+            angle = input.angle;
+            sprintSpeed = input.sprintSpeed;
+            walkSpeed = input.walkSpeed;
+            maxHP = input.maxHP;
+            maxEnergy = input.maxEnergy;
+            maxStamina = input.maxStamina;
+            attack = input.attack;
+            attackGap = input.attackGap;
+            attackRange = input.attackRange;
+            defense = input.defense;
+            scale = input.scale;
+            urgeRate = input.urgeRate;
+            evadeCooldown = input.evadeCooldown;
+            lifespan = input.lifespan;
+        }
+    }
+
+    [System.Serializable]
+    public class GeneInput {
+        public String species;
+        public OrganismType organismType;
+        public DietType dietType;
+        public float range; // collider.radius = range / scale;
+        public float angle;
+        public float sprintSpeed;
+        public float walkSpeed;
+        public float maxHP;
+        public float maxEnergy;
+        public float maxStamina;
+        public float attack;
+        public float attackGap; // In seconds;
+        public float attackRange;
+        public float defense;
+        public float scale;
+        public float urgeRate;
+        public float evadeCooldown; // In seconds;
+        public float lifespan;
+
+        public override string ToString() {
+            return "Gene Input: " + this.species + " blabla " + this.attackRange;
+        }
+    }
+
+    [System.Serializable]
+    public class GeneCollection {
+        public GeneInput[] genes; 
     }
 }

@@ -48,5 +48,7 @@ while(i!=99):
     list.append(dict)
     i=int(input("Enter 99 to exit else random val int"))
 
-with open('geneList.json','w') as f:
-    json.dump(list,f)
+data = {'genes': list}
+
+with open('../geneList.json','w') as f:
+    json.dump(data,f)

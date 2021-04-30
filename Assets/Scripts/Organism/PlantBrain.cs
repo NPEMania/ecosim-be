@@ -95,6 +95,10 @@ namespace Organism {
             currentHP = gene.maxHP;
         }
 
+        public void SetGeneration(int gen) {}
+
+        public int GetGeneration() { return 0; }
+
         private void Update() {
             timeSinceAlive += Time.deltaTime;
             //Debug.Log(gameObject.name + " " + timeSinceAlive + " " + gene.lifespan);
