@@ -10,27 +10,37 @@ public class Environment : MonoBehaviour {
     [Range(0, 20)] public float mutation;
     private StreamWriter writer;
     public TextAsset jsonInput;
+    
+    public TextAsset jsonInputCount;
     private String outPath = "/outputData.txt";
 
     private void Start() {
         //SpawnPlant(Vector3.zero, SampleGenes.plantGene);
         //Debug.Log(jsonInput.text);
         GeneCollection collection = JsonUtility.FromJson<GeneCollection>(jsonInput.text);
-        SpawnInitialAnimals(collection.genes);
+        GeneCountCollection collectionCount = JsonUtility.FromJson<GeneCountCollection>(jsonInputCount.text);
+       
+        SpawnInitialAnimals(collection.genes,collectionCount.genesCount);
         outPath = Application.dataPath + outPath;
         writer = new StreamWriter(File.Open(outPath, FileMode.Create));
         writer.WriteLine("[");
     }
 
-    private void SpawnInitialAnimals(GeneInput[] geneInputs) {
+    private void SpawnInitialAnimals(GeneInput[] geneInputs,int[] genesCount) {
         foreach (GeneInput g in geneInputs) {
             Debug.Log(JsonUtility.ToJson(g));
             Gene gene = new Gene(g);
             Debug.Log("Gene from gene input: " + gene.species + " --- " + gene.maxHP + " --- " + gene.scale);
-            float x = UnityEngine.Random.Range(-10f, 10f);
-            float z = UnityEngine.Random.Range(-10f, 10f);
-            float y = gene.scale;
-            FSMBrain.Create(gene, animalPrefab, new Vector3(x, y, z), Quaternion.identity, 0);
+            foreach(int count in genesCount)
+            {
+                for(int i=0;i<count;i++)
+                {
+                    float x = UnityEngine.Random.Range(-10f, 10f);
+                    float z = UnityEngine.Random.Range(-10f, 10f);
+                    float y = gene.scale;
+                    FSMBrain.Create(gene, animalPrefab, new Vector3(x, y, z), Quaternion.identity, 0);
+                }
+            }
         }
     }
 

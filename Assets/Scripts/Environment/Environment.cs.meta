@@ -3,7 +3,11 @@ guid: 3f8c068626862354e8018428260c738f
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - plantPrefab: {fileID: 7544629553498896781, guid: bc017ede8a8b02745b56f7c81685e9ee, type: 3}
+  - animalPrefab: {fileID: 6794947692962672342, guid: cbb6b5ec8d863fb4893eae38fa4b62ad, type: 3}
+  - jsonInput: {fileID: 4900000, guid: 7c86a04a51f789147b4a3ec6cfc3adaf, type: 3}
+  - jsonInputCount: {fileID: 4900000, guid: d08018ce48c3dec49b591375c69d5cd7, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

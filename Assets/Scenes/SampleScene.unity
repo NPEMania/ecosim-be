@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -652,6 +652,7 @@ MonoBehaviour:
   animalPrefab: {fileID: 7544629553498896781, guid: bc017ede8a8b02745b56f7c81685e9ee, type: 3}
   mutation: 0
   jsonInput: {fileID: 4900000, guid: 7c86a04a51f789147b4a3ec6cfc3adaf, type: 3}
+  jsonInputCount: {fileID: 4900000, guid: d08018ce48c3dec49b591375c69d5cd7, type: 3}
 --- !u!1 &775153133
 GameObject:
   m_ObjectHideFlags: 0

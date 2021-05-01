@@ -1,6 +1,7 @@
 import json
 i=0
-list=[]
+listGenes=[]
+listCount=[]
 while(i!=99):
     floatArray=[]
     species=input("Species Name ")
@@ -36,6 +37,7 @@ while(i!=99):
     floatArray.append(urgeRate)
     lifespan=float(input("Lifespan: "))
     floatArray.append(lifespan)
+    count=int(input("Number to spwan: "))
     dict={
         'species':species,'organismType':organismType,'dietType':dietType,
         'range':rangee,'angle':angle,
@@ -45,10 +47,15 @@ while(i!=99):
     'scale':scale,'urgeRate':urgeRate,'evadeCooldown':evadeCoolDown,
     'lifespan':lifespan,
     'floatArray':floatArray}
-    list.append(dict)
+    listGenes.append(dict)
+    listCount.append(count)
     i=int(input("Enter 99 to exit else random val int"))
 
-data = {'genes': list}
+data = {'genes': listGenes}
+dataCount={'genesCount':listCount}
 
 with open('../geneList.json','w') as f:
     json.dump(data,f)
+
+with open('../geneListCount.json','w') as f:
+    json.dump(dataCount,f)

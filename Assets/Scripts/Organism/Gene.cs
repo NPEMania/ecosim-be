@@ -165,4 +165,9 @@ namespace Organism {
     public class GeneCollection {
         public GeneInput[] genes; 
     }
+     [System.Serializable]
+    public class GeneCountCollection {
+        public int[] genesCount; 
+    }
+    
 }

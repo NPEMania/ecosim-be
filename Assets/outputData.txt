@@ -1,3 +1,2 @@
 [
-{"generation":0,"species":"jackal","organismType":"ANIMAL","dietType":"ANIMAL","gender":"FEMALE","range":20.0,"angle":110.0,"sprintSpeed":20.0,"walkSpeed":10.0,"maxHP":60.0,"maxEnergy":60.0,"maxStamina":60.0,"attack":30.0,"attackGap":0.4000000059604645,"attackRange":5.0,"defense":20.0,"scale":2.0,"urgeRate":10.0,"evadeCooldown":20.0,"lifespan":40.0,"encounters":0,"kills":0,"evasions":0,"timeSinceAlive":40.00120162963867,"causeOfDeath":"lifespan"},
 ]
