@@ -40,10 +40,12 @@ namespace Organism {
         }
 
         public void SetupGenes(Gene gene) {
-            Debug.Log("gene is null " + (gene == null));
+            Debug.Log("gene is null ");
+            this.gene = gene;
             this.stamina = gene.maxStamina;
             this.currentHP = gene.maxHP;
             this.energy = gene.maxEnergy;
+            transform.localScale = new Vector3(gene.scale, gene.scale, gene.scale);
             interactor.SetupGene(gene);
             controller.SetupGene(gene);
             triggerDetector.SetupGene(gene);
@@ -172,7 +174,6 @@ namespace Organism {
             triggerDetector=GetComponent<TriggerDetector>();
             
             OrgState = OrganismState.IDLE;
-            transform.localScale = new Vector3(gene.scale, gene.scale, gene.scale);
             environment = FindObjectOfType<Environment>();
         }
 
@@ -286,7 +287,6 @@ namespace Organism {
         }
 
         public static IBrain Create(Gene gene, GameObject prefab, Vector3 position, Quaternion rotation, int gen) {
-            Debug.Log("spawning ");
             GameObject org = Instantiate(prefab, position, rotation);
             IBrain brain = org.GetComponent<IBrain>();
             brain.SetupGenes(gene);
@@ -338,6 +338,10 @@ namespace Organism {
 
         public void OnMateLeftRange(GameObject mate) {
             
+        }
+
+        private void OnDestroy() {
+            Debug.Log(gene.species + " --- " + causeOfDeath + " <-");
         }
     }
 }

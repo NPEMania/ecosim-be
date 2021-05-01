@@ -14,7 +14,7 @@ public class Environment : MonoBehaviour {
 
     private void Start() {
         //SpawnPlant(Vector3.zero, SampleGenes.plantGene);
-        Debug.Log(jsonInput.text);
+        //Debug.Log(jsonInput.text);
         GeneCollection collection = JsonUtility.FromJson<GeneCollection>(jsonInput.text);
         SpawnInitialAnimals(collection.genes);
         outPath = Application.dataPath + outPath;
@@ -26,6 +26,7 @@ public class Environment : MonoBehaviour {
         foreach (GeneInput g in geneInputs) {
             Debug.Log(JsonUtility.ToJson(g));
             Gene gene = new Gene(g);
+            Debug.Log("Gene from gene input: " + gene.species + " --- " + gene.maxHP + " --- " + gene.scale);
             float x = UnityEngine.Random.Range(-10f, 10f);
             float z = UnityEngine.Random.Range(-10f, 10f);
             float y = gene.scale;

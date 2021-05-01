@@ -11,8 +11,6 @@ namespace Organism {
     [Serializable]
     public class Gene {
         public readonly String species;
-        public readonly String[] preys; // insert species
-        public readonly String[] predators; // insert species
         public readonly OrganismType organismType;
         public readonly DietType dietType;
         public readonly Gender gender;

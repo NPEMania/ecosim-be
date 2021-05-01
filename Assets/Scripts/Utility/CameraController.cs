@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour {
 
-    private float moveSpeed = 5f;
-    private float scrollSpeed = 50f;
+    private float moveSpeed = 40f;
+    private float scrollSpeed = 1000f;
 
     void Update () {
         if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0) {
