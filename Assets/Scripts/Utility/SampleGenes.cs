@@ -36,7 +36,7 @@ namespace Organism {
                 0f, 0f, 0f, 0f, 
                 50f, 50f, 0f, 0f,
                 0f, 0f, 50f, 3f,
-                10f, 0f, 70f
+                10f, 0f, (2f *24)     //3 days = (7*60)
         });
     }
 }

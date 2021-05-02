@@ -26,14 +26,23 @@ namespace Organism {
         private float staminaRate = 10f;
         private float urge = 0f;
         private float timeSinceLastHit = 0f;
-        public float timeSinceAlive = 0f;
+        public float timeSinceAlive = 0f;   //hours lived
+        
+        public float timeSinceAliveDays  {
+            get {
+            //    return ((timeSinceAlive/(24f*cycle.dayEquivalentInMinutes)));//notsure
+               
+               return ((timeSinceAlive/(24f)));//notsure
+            }
+            set {}
+        }  //hours lived
         public int encounters = 0;
         public int killSuccess = 0;
         public int evasions = 0;
         public int childrenCount = 0;
         public String causeOfDeath;
         private Environment environment;
-        private float depletionRatio = 0.2f;
+        private float depletionRatio = 0.36f;
 
         public float WinRate {
             get {
@@ -236,6 +245,7 @@ namespace Organism {
 
         private void UpdateStats() {
             timeSinceAlive += Time.deltaTime * cycle.dayRate;
+         
             if (timeSinceAlive > gene.lifespan) {
                 causeOfDeath = "lifespan";
                 environment.RegisterDeath(new OrganismExportData(gene, this));
@@ -259,18 +269,23 @@ namespace Organism {
         }
 
         private void DetermineAction() {
-            if (cycle.TimeOfDay < 6.5f && cycle.TimeOfDay > 18.5f) {
-                Debug.Log("Night for organism");
-                OrgState = OrganismState.REST;
-            } else {if (OrgState != OrganismState.EVADING 
+            if (cycle.TimeOfDay > 6.5f && cycle.TimeOfDay < 18.5f) {
+                  Debug.Log("Day");
+                 if (OrgState != OrganismState.EVADING 
                 || OrgState != OrganismState.CHASING_FOOD
                 || OrgState != OrganismState.CHASING_MATE
                 || OrgState != OrganismState.ATTACKING
                 || OrgState != OrganismState.FITNESS_CHECK) {
+                       Debug.Log("First if");
                 if (CurrentHP < gene.maxHP / 2 || CurrentEnergy < gene.maxEnergy / 2) {
+                      Debug.Log("First if inner 1");
                     OrgState = OrganismState.SEEKING_FOOD;
                 } else if (urge == 100f && (CurrentHP / gene.maxHP) > 0.75f && (CurrentEnergy / gene.maxEnergy) > 0.75f) {
+                       Debug.Log("First if inner 2");
                     OrgState = OrganismState.SEARCHING_MATE;
+                }else{
+                 OrgState = OrganismState.IDLE;
+                    
                 }   
             } else if (OrgState == OrganismState.EVADING) {
                 Debug.Log(gene.species + " " + gameObject.name +  " evade brain block");
@@ -286,10 +301,15 @@ namespace Organism {
                 }
             } else if (OrgState == OrganismState.REST) {
                 // Check day and night and rest accordingly
+                   Debug.Log("Enter here "+stamina);
                 if (CurrentStamina / gene.maxStamina > 0.75f) {
+                   Debug.Log("Entered here hahah");
                     OrgState = OrganismState.IDLE;
                 }
-            }}
+            }}else{
+                    OrgState = OrganismState.REST;
+                
+            }
             Debug.Log(cycle.TimeOfDay);
         }
 

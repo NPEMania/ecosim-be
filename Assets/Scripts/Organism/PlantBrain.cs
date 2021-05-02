@@ -10,6 +10,7 @@ namespace Organism {
 
         public GameObject prefab;
         private DayNightCycle cycle;
+        private int offSpring=0;
         private Environment environment;
         private float currentHP;
         private Gene gene;
@@ -43,7 +44,16 @@ namespace Organism {
         public float CurrentStamina { get { return 0; }  set {}  }
 
         private float urge = 0;
-        private float timeSinceAlive = 0f;
+        private float timeSinceAlive = 0f;//hours
+       public float timeSinceAliveDays  {
+             get {
+            //    return ((timeSinceAlive/(24f*cycle.dayEquivalentInMinutes)));//notsure
+               
+               return ((timeSinceAlive/(24f)));//notsure
+            }
+            set {}
+        } 
+        
         private float creationTime;
 
         public void DealDamage(Damageable opponent){
@@ -100,8 +110,9 @@ namespace Organism {
         public int GetGeneration() { return 0; }
 
         private void Update() {
-            timeSinceAlive += Time.deltaTime;
-            //Debug.Log(gameObject.name + " " + timeSinceAlive + " " + gene.lifespan);
+            timeSinceAlive += Time.deltaTime * cycle.dayRate;
+            Debug.Log(gameObject.name + " " + timeSinceAlive + " " + gene.lifespan+" .."+timeSinceAliveDays);
+            
             if (timeSinceAlive > gene.lifespan) {
                 Debug.Log(gameObject.name + " Destroying");
                 Destroy(gameObject);
@@ -109,17 +120,17 @@ namespace Organism {
             if (cycle != null) {
                 if (cycle.TimeOfDay > 6.5 && cycle.TimeOfDay < 18.75) {
                     urge += Time.deltaTime * gene.urgeRate;
-                    if (urge > 100) {
+                     if (timeSinceAlive > (gene.lifespan*0.5f)&&offSpring<1) {
                         Debug.Log("Spawning new plant");
+                        offSpring++;
                         environment.SpawnPlant(transform.position, gene);
-                        urge = 0;
                     }
-                } else {
-                    urge -= Time.deltaTime * gene.urgeRate;
-                    if (urge < 0) {
-                        urge = 0;
+                    if (timeSinceAlive > (gene.lifespan*0.7f)&&offSpring<2) {
+                        Debug.Log("Spawning new plant");
+                        offSpring++;
+                        environment.SpawnPlant(transform.position, gene);
                     }
-                }
+                } 
             }
         }
 

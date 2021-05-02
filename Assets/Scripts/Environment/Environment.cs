@@ -20,7 +20,8 @@ public class Environment : MonoBehaviour {
         GeneCollection collection = JsonUtility.FromJson<GeneCollection>(jsonInput.text);
         GeneCountCollection collectionCount = JsonUtility.FromJson<GeneCountCollection>(jsonInputCount.text);
        
-        SpawnInitialAnimals(collection.genes,collectionCount.genesCount);
+      //  SpawnInitialAnimals(collection.genes,collectionCount.genesCount);
+    //    SpawnPlantsInVicinity(10);
         outPath = Application.dataPath + outPath;
         writer = new StreamWriter(File.Open(outPath, FileMode.Create));
         writer.WriteLine("[");
