@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -606,6 +606,7 @@ GameObject:
   m_Component:
   - component: {fileID: 728902452}
   - component: {fileID: 728902453}
+  - component: {fileID: 728902454}
   m_Layer: 0
   m_Name: Arena
   m_TagString: Untagged
@@ -653,6 +654,23 @@ MonoBehaviour:
   mutation: 0
   jsonInput: {fileID: 4900000, guid: 7c86a04a51f789147b4a3ec6cfc3adaf, type: 3}
   jsonInputCount: {fileID: 4900000, guid: d08018ce48c3dec49b591375c69d5cd7, type: 3}
+--- !u!114 &728902454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 728902451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb3e1ebac71715b4da88b55f5b39c943, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  directionalLight: {fileID: 0}
+  preset: {fileID: 11400000, guid: 8253b101a9e466c41af70150279f38f7, type: 2}
+  timeOfDay: 7
+  dayEquivalentInMinutes: 1
+  dayRate: 0.4
 --- !u!1 &775153133
 GameObject:
   m_ObjectHideFlags: 0

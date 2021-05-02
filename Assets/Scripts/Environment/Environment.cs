@@ -21,7 +21,7 @@ public class Environment : MonoBehaviour {
         GeneCountCollection collectionCount = JsonUtility.FromJson<GeneCountCollection>(jsonInputCount.text);
        
        SpawnInitialAnimals(collection.genes,collectionCount.genesCount);
-       SpawnPlantsInVicinity(8);
+       SpawnPlantsInVicinity(15);
         outPath = Application.dataPath + outPath;
         writer = new StreamWriter(File.Open(outPath, FileMode.Create));
         writer.WriteLine("[");
@@ -42,28 +42,28 @@ public class Environment : MonoBehaviour {
              
             for (int i=0;i<genesCount[j];i++) {
                 Gene gene = new Gene(g);
-                Debug.Log("kkkk  "+gene.gender);
-                if(i%2==0) {
+                //Debug.Log("kkkk  "+gene.gender);
+                if(i%3==0) {
                     gene.gender=Gender.MALE;
                 }else{
                     gene.gender=Gender.FEMALE;
                 }
-                Debug.Log("kkkk  "+gene.gender);
-                float x = UnityEngine.Random.Range(-50f, 50f );
-                float z = UnityEngine.Random.Range(-50f, 50f );
+                //Debug.Log("kkkk  "+gene.gender);
+                float x = UnityEngine.Random.Range(-40f, 40f);
+                float z = UnityEngine.Random.Range(-40f, 40f);
                 float y = gene.scale;
                 Vector3 vec=new Vector3(x,y,z);
                 Vector3 center = new Vector3(0, y, 0);
                 FSMBrain.Create(gene, animalPrefab, vec, Quaternion.LookRotation(center - vec, Vector3.up), 0,background);
             }
-                j++;
+            j++;
         }
     }
 
     public void SpawnPlantsInVicinity(int count){
         for(int i=0;i<count;i++){
-            float x = UnityEngine.Random.Range(-100f, 100f );
-            float z = UnityEngine.Random.Range(-100f, 100f );
+            float x = UnityEngine.Random.Range(-40f, 40f );
+            float z = UnityEngine.Random.Range(-40f, 40f );
             float y = 0;
             Vector3 vec=new Vector3(x,y,z);
             // Vector3 spawnPosition = vec + UtilityMethods.OnUnitCircle() * 10;

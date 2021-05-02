@@ -33,9 +33,11 @@ public class OrganismExportData {
     public int kills;
     public int evasions;
     public float timeSinceAlive;
+    public int children;
     public String causeOfDeath;
 
     public OrganismExportData(Gene gene, FSMBrain brain) {
+        generation = brain.GetGeneration();
         encounters = brain.encounters;
         kills = brain.killSuccess;
         evasions = brain.evasions;

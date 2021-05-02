@@ -61,9 +61,12 @@ namespace Organism {
         }
 
         public void ReceiveDamage(float damage, GameObject opponent) {
+            Debug.Log("Plant received Damage");
             target = opponent;
             var effectiveDamage = damage * 100 / (100 + gene.defense);
-            CurrentHP = CurrentHP - effectiveDamage;
+            CurrentHP = CurrentHP - damage * 2;
+            //opponent.GetComponent<IBrain>().RegisterKill(gene);
+            //Destroy(this.gameObject)
         }
 
         public void OnHuntTargetAcquired(GameObject target) {}
@@ -111,22 +114,22 @@ namespace Organism {
 
         private void Update() {
             timeSinceAlive += Time.deltaTime * cycle.dayRate;
-            Debug.Log(gameObject.name + " " + timeSinceAlive + " " + gene.lifespan+" .."+timeSinceAliveDays);
+            //Debug.Log(gameObject.name + " " + timeSinceAlive + " " + gene.lifespan+" .."+timeSinceAliveDays);
             
             if (timeSinceAlive > gene.lifespan) {
-                Debug.Log(gameObject.name + " Destroying");
+                //Debug.Log(gameObject.name + " Destroying");
                 Destroy(gameObject);
             }
             if (cycle != null) {
                 if (cycle.TimeOfDay > 6.5 && cycle.TimeOfDay < 18.75) {
                     urge += Time.deltaTime * gene.urgeRate;
                      if (timeSinceAlive > (gene.lifespan*0.5f)&&offSpring<1) {
-                        Debug.Log("Spawning new plant");
+                        //Debug.Log("Spawning new plant");
                         offSpring++;
                         environment.SpawnPlant(transform.position, gene);
                     }
                     if (timeSinceAlive > (gene.lifespan*0.7f)&&offSpring<2) {
-                        Debug.Log("Spawning new plant");
+                        //Debug.Log("Spawning new plant");
                         offSpring++;
                         environment.SpawnPlant(transform.position, gene);
                     }

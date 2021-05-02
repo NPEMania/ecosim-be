@@ -245,7 +245,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 198093768}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -295,7 +295,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 198093768}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -328,7 +328,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 370755493}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -100, y: 20, z: 0}
+  m_LocalPosition: {x: -200, y: 20, z: 0}
   m_LocalScale: {x: 1, y: 60, z: 500}
   m_Children: []
   m_Father: {fileID: 637406667}
@@ -423,7 +423,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 452586301}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 100, y: 20, z: 0}
+  m_LocalPosition: {x: 200, y: 20, z: 0}
   m_LocalScale: {x: 1, y: 60, z: 500}
   m_Children: []
   m_Father: {fileID: 637406667}
@@ -596,7 +596,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 880510655}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -100, y: 0, z: -100}
+  m_LocalPosition: {x: -200, y: 0, z: -200}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 637406667}
@@ -629,7 +629,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1063441901}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 20, z: -100}
+  m_LocalPosition: {x: 0, y: 20, z: -200}
   m_LocalScale: {x: 500, y: 60, z: 1}
   m_Children: []
   m_Father: {fileID: 637406667}
@@ -724,7 +724,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1156812489}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 20, z: 100}
+  m_LocalPosition: {x: 0, y: 20, z: 200}
   m_LocalScale: {x: 500, y: 60, z: 1}
   m_Children: []
   m_Father: {fileID: 637406667}
@@ -856,7 +856,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   directionalLight: {fileID: 1560638347}
   preset: {fileID: 11400000, guid: 8253b101a9e466c41af70150279f38f7, type: 2}
-  timeOfDay: 0
+  timeOfDay: 7
   dayEquivalentInMinutes: 1
   dayRate: 0.4
 --- !u!1 &1560638346
@@ -1049,8 +1049,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 198093773}
-  distance: 3
-  height: 3
+  distance: 5.66
+  height: 3.61
   damping: 5
   smoothRotation: 1
   followBehind: 1

@@ -50,6 +50,7 @@ namespace Organism {
                     if (target != null) {
                         if ((transform.position - target.transform.position).sqrMagnitude < (attackRange*attackRange)) {
                             // Attack logic working
+                            Debug.Log(brain.SelfGene.species + "  attacking now");
                             LookIn((target.transform.position - transform.position).normalized);
                             if (timeSinceLastAttacked >= attackGap) {
                                 target.GetComponent<Damageable>().ReceiveDamage(attack, gameObject);

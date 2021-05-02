@@ -23,22 +23,22 @@ namespace Organism {
         }
 
         private void OnTriggerStay(Collider other) {
-            //Debug.Log(brain.SelfGene.species + " " + brain.OrgState + " " + other.gameObject.name);
             if (other.gameObject.tag == "organism") {
+                Debug.Log(brain.SelfGene.species + " " + brain.OrgState + " " + other.gameObject.name);
                 var otherBrain = other.gameObject.GetComponent<IBrain>();
+                //Debug.Log("Brain is null  " + (brain == null));
                 if (brain.OrgState == OrganismState.SEEKING_FOOD) {
                     // Allow to scan for food targets
                     // Add angle check
                     // Check if gene is not same
-                    if (brain.SelfGene.species != otherBrain.SelfGene.species && UtilityMethods.IsEdible(brain.SelfGene, otherBrain.SelfGene)) {
+                    //if (brain.SelfGene.species != otherBrain.SelfGene.species && UtilityMethods.IsEdible(brain.SelfGene, otherBrain.SelfGene)) {
                         brain.OnHuntTargetAcquired(other.gameObject);
-                    }
+                    //}
                 } else if (brain.OrgState == OrganismState.SEARCHING_MATE) {
                     // Allow to scan mates
                 
                     if (otherBrain.SelfGene.species == brain.SelfGene.species
-                        && otherBrain.SelfGene.gender != brain.SelfGene.gender
-                        && otherBrain.OrgState == OrganismState.SEARCHING_MATE) {
+                        && otherBrain.SelfGene.gender != brain.SelfGene.gender) {
                         brain.OnMateAcquired(other.gameObject);
                     }
                 }

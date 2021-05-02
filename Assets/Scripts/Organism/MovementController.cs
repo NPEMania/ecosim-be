@@ -94,8 +94,8 @@ namespace Organism {
                     if (target != null) {
                         desiredDir = (target.transform.position - transform.position);
                         desiredDir.y = 0f;
-                        if (desiredDir.sqrMagnitude > (attackRange*attackRange)) {
-                            MoveTo(desiredDir.normalized, walkSpeed, rotSpeed);
+                        if (desiredDir.sqrMagnitude > (range * range)) {
+                            MoveTo(desiredDir.normalized, (walkSpeed + sprintSpeed) / 2, rotSpeed);
                         } else {
                             // Here the body has reached the attack range
                             body.velocity = Vector3.zero;

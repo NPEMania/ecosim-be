@@ -34,8 +34,8 @@ namespace Organism {
 
         public static Gene plantGene = new Gene("plant1", OrganismType.PLANT, DietType.PLANT, new float[] {
                 0f, 0f, 0f, 0f, 
-                50f, 50f, 0f, 0f,
-                0f, 0f, 50f, 3f,
+                50f, 100f, 0f, 0f,
+                0f, 0f, 1f, 1f,
                 10f, 0f, (7f *24)     //2 days = (2*24)
         });
     }
