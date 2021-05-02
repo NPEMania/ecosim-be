@@ -53,7 +53,7 @@ namespace Organism {
         }
 
         public void SetupGenes(Gene gene) {
-            Debug.Log("gene is null ");
+            // Debug.Log("gene is null ");
             this.gene = gene;
             this.stamina = gene.maxStamina;
             this.currentHP = gene.maxHP;
@@ -194,6 +194,8 @@ namespace Organism {
             cycle = FindObjectOfType<DayNightCycle>();
             interactor.SetupCycle(cycle);
             controller.SetupCycle(cycle);
+            Debug.Log("llllllllllllllllll"+gene.species + " " + gameObject.name + " " + OrgState + " " + CurrentHP + " " + CurrentEnergy + " " + CurrentStamina + " " + urge + " " + gene.gender + " " + WinRate);
+      
         }
       
         public void OnStateChanged(OrganismState state) {
@@ -204,13 +206,13 @@ namespace Organism {
             if (target.GetComponent<IBrain>().SelfGene.organismType == OrganismType.ANIMAL) {
                 encounters++;
             }
-            Debug.Log(id + " Target Got");
+            // Debug.Log(id + " Target Got");
             OrgState = OrganismState.CHASING_FOOD;
             controller.UpdateTarget(target);
         }
 
         public void OnHuntTargetLeft(GameObject target) {
-            Debug.Log(id + " Target Left");
+            // Debug.Log(id + " Target Left");
             OrgState = OrganismState.IDLE;
             controller.UpdateTarget(null);
         }
@@ -265,23 +267,23 @@ namespace Organism {
             if (urge > 100f) {
                 urge = 100f;
             }
-            //Debug.Log(gene.species + " " + gameObject.name + " " + OrgState + " " + CurrentHP + " " + CurrentEnergy + " " + CurrentStamina + " " + urge + " " + gene.gender + " " + WinRate);
+            // Debug.Log(gene.species + " " + gameObject.name + " " + OrgState + " " + CurrentHP + " " + CurrentEnergy + " " + CurrentStamina + " " + urge + " " + gene.gender + " " + WinRate);
         }
 
         private void DetermineAction() {
             if (cycle.TimeOfDay > 6.5f && cycle.TimeOfDay < 18.5f) {
-                  Debug.Log("Day");
+                //   Debug.Log("Day");
                  if (OrgState != OrganismState.EVADING 
                 || OrgState != OrganismState.CHASING_FOOD
                 || OrgState != OrganismState.CHASING_MATE
                 || OrgState != OrganismState.ATTACKING
                 || OrgState != OrganismState.FITNESS_CHECK) {
-                       Debug.Log("First if");
+                    //    Debug.Log("First if");
                 if (CurrentHP < gene.maxHP / 2 || CurrentEnergy < gene.maxEnergy / 2) {
-                      Debug.Log("First if inner 1");
+                    //   Debug.Log("First if inner 1");
                     OrgState = OrganismState.SEEKING_FOOD;
                 } else if (urge == 100f && (CurrentHP / gene.maxHP) > 0.75f && (CurrentEnergy / gene.maxEnergy) > 0.75f) {
-                       Debug.Log("First if inner 2");
+                    //    Debug.Log("First if inner 2");
                     OrgState = OrganismState.SEARCHING_MATE;
                 }else{
                  OrgState = OrganismState.IDLE;
@@ -295,15 +297,15 @@ namespace Organism {
                 if (timeSinceAlive - timeSinceLastHit > gene.evadeCooldown) {
                     // Now probably it is safe, so can go to idle
                     ++evasions;
-                    Debug.Log(gene.species + " " + gameObject.name +  " is ending evade");
+                    // Debug.Log(gene.species + " " + gameObject.name +  " is ending evade");
                     OrgState = OrganismState.IDLE;
                     controller.UpdateTarget(null);
                 }
             } else if (OrgState == OrganismState.REST) {
                 // Check day and night and rest accordingly
-                   Debug.Log("Enter here "+stamina);
+                //    Debug.Log("Enter here "+stamina);
                 if (CurrentStamina / gene.maxStamina > 0.75f) {
-                   Debug.Log("Entered here hahah");
+                //    Debug.Log("Entered here hahah");
                     OrgState = OrganismState.IDLE;
                 }
             }}else{
@@ -347,7 +349,7 @@ namespace Organism {
                     // Reject based on advantage in genes
                     // Or check successful hunts or evasions if greater than self
                     // Or randomly check advantage over gene
-                    Debug.Log("Starting a baby");
+                    // Debug.Log("Starting a baby");
                     CurrentEnergy = CurrentEnergy - (CurrentEnergy / 2);
                     male.ReceiveMateResponse(true, this.gameObject);
                     var babyGene = Gene.combine(SelfGene, male.SelfGene, environment.mutation);

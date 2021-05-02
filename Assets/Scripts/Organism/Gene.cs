@@ -13,7 +13,7 @@ namespace Organism {
         public readonly String species;
         public readonly OrganismType organismType;
         public readonly DietType dietType;
-        public readonly Gender gender;
+        public  Gender gender;
         public readonly float range; // collider.radius = range / scale;
         public readonly float angle;
         public readonly float sprintSpeed;
@@ -44,7 +44,7 @@ namespace Organism {
         }
 
         public Gene(string species, OrganismType organismType, DietType diet, float[] a) {
-            int random = (new System.Random()).Next(0, 2);
+            int random = UnityEngine.Random.Range(0, 2);
             if (random == 0) gender = Gender.MALE;
             else gender = Gender.FEMALE;
             this.species = species;

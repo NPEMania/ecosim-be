@@ -20,39 +20,60 @@ public class Environment : MonoBehaviour {
         GeneCollection collection = JsonUtility.FromJson<GeneCollection>(jsonInput.text);
         GeneCountCollection collectionCount = JsonUtility.FromJson<GeneCountCollection>(jsonInputCount.text);
        
-      //  SpawnInitialAnimals(collection.genes,collectionCount.genesCount);
-    //    SpawnPlantsInVicinity(10);
+       SpawnInitialAnimals(collection.genes,collectionCount.genesCount);
+       SpawnPlantsInVicinity(8);
         outPath = Application.dataPath + outPath;
         writer = new StreamWriter(File.Open(outPath, FileMode.Create));
         writer.WriteLine("[");
     }
 
     private void SpawnInitialAnimals(GeneInput[] geneInputs,int[] genesCount) {
+        int j=0;
         foreach (GeneInput g in geneInputs) {
             //Debug.Log(JsonUtility.ToJson(g));
-            Gene gene = new Gene(g);
+            
+           
             Color background = new Color(
                  UnityEngine.Random.Range(0f, 1f), 
                  UnityEngine.Random.Range(0f, 1f), 
                  UnityEngine.Random.Range(0f, 1f)
                  );
             //Debug.Log("Gene from gene input: " + gene.species + " --- " + gene.maxHP + " --- " + gene.scale);
-            foreach(int count in genesCount)
-            {
-                
-                for(int i=0;i<count;i++)
+             
+                for(int i=0;i<genesCount[j];i++)
                 {
-                    float x = UnityEngine.Random.Range(-200f, 200f );
-                    float z = UnityEngine.Random.Range(-200f, 200f );
+                     Gene gene = new Gene(g);
+                     Debug.Log("kkkk  "+gene.gender);
+                     if(i%2==0)
+                     {
+                        gene.gender=Gender.MALE;
+                     }else{
+                        gene.gender=Gender.FEMALE;
+                     }
+                       Debug.Log("kkkk  "+gene.gender);
+                    float x = UnityEngine.Random.Range(-50f, 50f );
+                    float z = UnityEngine.Random.Range(-50f, 50f );
                     float y = gene.scale;
                     Vector3 vec=new Vector3(x,y,z);
                     FSMBrain.Create(gene, animalPrefab, vec, Quaternion.LookRotation(Vector3.zero-vec,Vector3.up), 0,background);
                     
                 }
-            }
+
+                j++;
+            
         }
     }
 
+    public void SpawnPlantsInVicinity(int count){
+        for(int i=0;i<count;i++){
+            float x = UnityEngine.Random.Range(-100f, 100f );
+            float z = UnityEngine.Random.Range(-100f, 100f );
+            float y = 0;
+            Vector3 vec=new Vector3(x,y,z);
+            // Vector3 spawnPosition = vec + UtilityMethods.OnUnitCircle() * 10;
+            PlantBrain.Create(SampleGenes.plantGene, plantPrefab, vec, Quaternion.identity);
+        }
+    }
     public void SpawnPlant(Vector3 position, Gene gene) {
         Vector3 spawnPosition = position + UtilityMethods.OnUnitCircle() * 10;
         PlantBrain.Create(gene, plantPrefab, spawnPosition, Quaternion.identity);
