@@ -8,6 +8,7 @@ namespace Organism {
     public class FSMBrain: MonoBehaviour, IBrain, Damageable {
 
         public String id;
+        
         public int gen;
         public Gene gene;
         private OrganismState state;
@@ -175,8 +176,9 @@ namespace Organism {
             
             OrgState = OrganismState.IDLE;
             environment = FindObjectOfType<Environment>();
+            
         }
-
+      
         public void OnStateChanged(OrganismState state) {
             
         }
@@ -286,9 +288,10 @@ namespace Organism {
             }
         }
 
-        public static IBrain Create(Gene gene, GameObject prefab, Vector3 position, Quaternion rotation, int gen) {
+        public static IBrain Create(Gene gene, GameObject prefab, Vector3 position, Quaternion rotation, int gen,Color colorBg) {
             GameObject org = Instantiate(prefab, position, rotation);
             IBrain brain = org.GetComponent<IBrain>();
+            org.GetComponentInChildren<Renderer>().material.color = colorBg;
             brain.SetupGenes(gene);
             brain.SetGeneration(gen);
             return brain;
@@ -317,7 +320,7 @@ namespace Organism {
                     male.ReceiveMateResponse(true, this.gameObject);
                     var babyGene = Gene.combine(SelfGene, male.SelfGene, environment.mutation);
                     var nextGen = ((gen > male.GetGeneration()) ? gen : male.GetGeneration()) + 1;
-                    Create(babyGene, interactor.prefab, transform.position + new Vector3(2, 0, 2), transform.rotation, nextGen);
+                    Create(babyGene, interactor.prefab, transform.position + new Vector3(2, 0, 2), transform.rotation, nextGen,GetComponentInChildren<Renderer>().material.color);
                     urge = 0;
                 }
             } else {

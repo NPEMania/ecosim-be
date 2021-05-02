@@ -30,15 +30,23 @@ public class Environment : MonoBehaviour {
         foreach (GeneInput g in geneInputs) {
             Debug.Log(JsonUtility.ToJson(g));
             Gene gene = new Gene(g);
+            Color background = new Color(
+                 UnityEngine.Random.Range(0f, 1f), 
+                 UnityEngine.Random.Range(0f, 1f), 
+                 UnityEngine.Random.Range(0f, 1f)
+                 );
             Debug.Log("Gene from gene input: " + gene.species + " --- " + gene.maxHP + " --- " + gene.scale);
             foreach(int count in genesCount)
             {
+                
                 for(int i=0;i<count;i++)
                 {
-                    float x = UnityEngine.Random.Range(-10f, 10f);
-                    float z = UnityEngine.Random.Range(-10f, 10f);
+                    float x = UnityEngine.Random.Range(-200f, 200f );
+                    float z = UnityEngine.Random.Range(-200f, 200f );
                     float y = gene.scale;
-                    FSMBrain.Create(gene, animalPrefab, new Vector3(x, y, z), Quaternion.identity, 0);
+                    Vector3 vec=new Vector3(x,y,z);
+                    FSMBrain.Create(gene, animalPrefab, vec, Quaternion.LookRotation(Vector3.zero-vec,Vector3.up), 0,background);
+                    
                 }
             }
         }

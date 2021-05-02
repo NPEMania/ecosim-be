@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.43667546, g: 0.48427135, b: 0.5645225, a: 1}
+  m_IndirectSpecularColor: {r: 0.43667564, g: 0.48427135, b: 0.5645232, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -714,7 +714,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   plantPrefab: {fileID: 6794947692962672342, guid: cbb6b5ec8d863fb4893eae38fa4b62ad, type: 3}
+  animalPrefab: {fileID: 7544629553498896781, guid: bc017ede8a8b02745b56f7c81685e9ee, type: 3}
   mutation: 3.8
+  jsonInput: {fileID: 4900000, guid: 7c86a04a51f789147b4a3ec6cfc3adaf, type: 3}
+  jsonInputCount: {fileID: 4900000, guid: d08018ce48c3dec49b591375c69d5cd7, type: 3}
 --- !u!4 &1486678225
 Transform:
   m_ObjectHideFlags: 0
