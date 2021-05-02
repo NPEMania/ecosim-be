@@ -6,6 +6,8 @@ using UnityEngine;
 [ExecuteAlways]
 public class DayNightCycle : MonoBehaviour {
 
+    //60x s: 24h
+
     public Light directionalLight;
     public LightingPreset preset;
     public float TimeOfDay {
@@ -13,15 +15,17 @@ public class DayNightCycle : MonoBehaviour {
         set {}
     }
     [SerializeField] [Range(0, 24)] private float timeOfDay;
+    public float dayEquivalentInMinutes = 1f;
+    [HideInInspector] public float dayRate;
 
-    void Start() {
-        
+    void Awake() {
+        dayRate = 24f / (60f * dayEquivalentInMinutes);
     }
 
     private void Update() {
         if (Application.isPlaying) {
-            timeOfDay = (timeOfDay + Time.deltaTime) % 24;
-            UpdateLighting(timeOfDay / 24);
+            timeOfDay = (timeOfDay + Time.deltaTime * dayRate) % 24f;
+            UpdateLighting(timeOfDay / 24f);
         }
     }
 

@@ -114,7 +114,7 @@ namespace Organism {
             if (random == 0) gender = Gender.MALE;
             else gender = Gender.FEMALE;
             this.species = input.species;
-            Debug.Log("from gene input " + input.species);
+            //Debug.Log("from gene input " + input.species);
             this.organismType = input.organismType;
             this.dietType = input.dietType;
             range = input.range;

@@ -18,6 +18,7 @@ namespace Organism {
         private GameObject target;
 
         private TriggerDetector triggerDetector;
+        private DayNightCycle cycle;
 
         private float stamina;
         private float currentHP;
@@ -29,8 +30,10 @@ namespace Organism {
         public int encounters = 0;
         public int killSuccess = 0;
         public int evasions = 0;
+        public int childrenCount = 0;
         public String causeOfDeath;
         private Environment environment;
+        private float depletionRatio = 0.2f;
 
         public float WinRate {
             get {
@@ -107,18 +110,21 @@ namespace Organism {
                 energy = value;
                 if (energy < 0) {
                     energy = gene.maxEnergy;
-                    CurrentHP = CurrentHP - 1f; // Not scaling
+                    CurrentHP = CurrentHP - (depletionRatio * gene.maxHP); // scaling
                 }
                 if (energy > gene.maxEnergy) energy = gene.maxEnergy;
             }
         }
+
+        //1e -> 10s, xe -> maxs
+
         public float CurrentStamina { get { return stamina; }
             set {
                 stamina = value;
                 if (stamina < 0) {
                     if (OrgState == OrganismState.EVADING || OrgState == OrganismState.CHASING_FOOD) {
                         stamina = gene.maxStamina;
-                        CurrentEnergy = CurrentEnergy - 1f; // Not scaling
+                        CurrentEnergy = CurrentEnergy - (depletionRatio * gene.maxEnergy); // scaling
                     } else {
                         stamina = 0;
                         OrgState = OrganismState.REST;
@@ -176,7 +182,9 @@ namespace Organism {
             
             OrgState = OrganismState.IDLE;
             environment = FindObjectOfType<Environment>();
-            
+            cycle = FindObjectOfType<DayNightCycle>();
+            interactor.SetupCycle(cycle);
+            controller.SetupCycle(cycle);
         }
       
         public void OnStateChanged(OrganismState state) {
@@ -227,23 +235,23 @@ namespace Organism {
         }
 
         private void UpdateStats() {
-            timeSinceAlive += Time.deltaTime;
+            timeSinceAlive += Time.deltaTime * cycle.dayRate;
             if (timeSinceAlive > gene.lifespan) {
                 causeOfDeath = "lifespan";
                 environment.RegisterDeath(new OrganismExportData(gene, this));
                 Destroy(this.gameObject);
             }
             if (OrgState != OrganismState.REST) {
-                CurrentEnergy = CurrentEnergy - Time.deltaTime;
+                CurrentEnergy = CurrentEnergy - Time.deltaTime * gene.scale;
             }
             if (velocity.sqrMagnitude >= (gene.sprintSpeed * gene.sprintSpeed)) {
-                CurrentStamina = CurrentStamina - Time.deltaTime * staminaRate;
+                CurrentStamina = CurrentStamina - Time.deltaTime * staminaRate * gene.scale;
             } else {
                 // When not running, stamina regens over time
-                CurrentStamina += Time.deltaTime * staminaRate;
+                CurrentStamina += Time.deltaTime * staminaRate ;
             }
             //Reset urge to zero after mating;
-            urge = urge + Time.deltaTime;
+            urge = urge + Time.deltaTime * gene.urgeRate;
             if (urge > 100f) {
                 urge = 100f;
             }
@@ -251,7 +259,10 @@ namespace Organism {
         }
 
         private void DetermineAction() {
-            if (OrgState != OrganismState.EVADING 
+            if (cycle.TimeOfDay < 6.5f && cycle.TimeOfDay > 18.5f) {
+                Debug.Log("Night for organism");
+                OrgState = OrganismState.REST;
+            } else {if (OrgState != OrganismState.EVADING 
                 || OrgState != OrganismState.CHASING_FOOD
                 || OrgState != OrganismState.CHASING_MATE
                 || OrgState != OrganismState.ATTACKING
@@ -278,7 +289,8 @@ namespace Organism {
                 if (CurrentStamina / gene.maxStamina > 0.75f) {
                     OrgState = OrganismState.IDLE;
                 }
-            }
+            }}
+            Debug.Log(cycle.TimeOfDay);
         }
 
         private void ChangeAndCacheState(OrganismState newState) {
@@ -321,6 +333,7 @@ namespace Organism {
                     var babyGene = Gene.combine(SelfGene, male.SelfGene, environment.mutation);
                     var nextGen = ((gen > male.GetGeneration()) ? gen : male.GetGeneration()) + 1;
                     Create(babyGene, interactor.prefab, transform.position + new Vector3(2, 0, 2), transform.rotation, nextGen,GetComponentInChildren<Renderer>().material.color);
+                    childrenCount ++;
                     urge = 0;
                 }
             } else {
@@ -334,6 +347,7 @@ namespace Organism {
             if (accepted) {
                 CurrentEnergy = CurrentEnergy - (CurrentEnergy / 4);
                 urge = 0;
+                childrenCount ++;
             } else {
                 OrgState = OrganismState.IDLE;
             }

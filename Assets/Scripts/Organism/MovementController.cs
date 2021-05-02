@@ -9,6 +9,7 @@ namespace Organism {
     public class MovementController: MonoBehaviour {
 
         private IBrain brain;
+        private DayNightCycle cycle;
         private Rigidbody body;
         public float wandering = 0.3f;
         public float steering = 1f;
@@ -41,6 +42,10 @@ namespace Organism {
             this.sprintSpeed = gene.sprintSpeed;
             this.range=gene.range;
             this.attackRange=gene.attackRange;
+        }
+
+        public void SetupCycle(DayNightCycle cycle) {
+            this.cycle = cycle;
         }
 
         private void FixedUpdate() {

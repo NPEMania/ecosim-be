@@ -35,8 +35,8 @@ while(i!=99):
     floatArray.append(rangee)
     evadeCoolDown=float(input("Evade Cooldown: "))
     floatArray.append(urgeRate)
-    lifespan=float(input("Lifespan: "))
-    floatArray.append(lifespan)
+    lifespan=float(input("Lifespan: (years) "))
+    floatArray.append(lifespan * 365)
     count=int(input("Number to spwan: "))
     dict={
         'species':species,'organismType':organismType,'dietType':dietType,
@@ -45,7 +45,7 @@ while(i!=99):
     'maxEnergy':maxEnergy,'maxStamina':maxStamina,'attack':attack,
     'attackGap':attackGap,'attackRange':attackRange,'defense':defense,
     'scale':scale,'urgeRate':urgeRate,'evadeCooldown':evadeCoolDown,
-    'lifespan':lifespan,
+    'lifespan':lifespan * 365,
     'floatArray':floatArray}
     listGenes.append(dict)
     listCount.append(count)

@@ -28,14 +28,14 @@ public class Environment : MonoBehaviour {
 
     private void SpawnInitialAnimals(GeneInput[] geneInputs,int[] genesCount) {
         foreach (GeneInput g in geneInputs) {
-            Debug.Log(JsonUtility.ToJson(g));
+            //Debug.Log(JsonUtility.ToJson(g));
             Gene gene = new Gene(g);
             Color background = new Color(
                  UnityEngine.Random.Range(0f, 1f), 
                  UnityEngine.Random.Range(0f, 1f), 
                  UnityEngine.Random.Range(0f, 1f)
                  );
-            Debug.Log("Gene from gene input: " + gene.species + " --- " + gene.maxHP + " --- " + gene.scale);
+            //Debug.Log("Gene from gene input: " + gene.species + " --- " + gene.maxHP + " --- " + gene.scale);
             foreach(int count in genesCount)
             {
                 

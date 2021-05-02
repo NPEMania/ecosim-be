@@ -7,6 +7,7 @@ namespace Organism {
     public class Interactor: MonoBehaviour {
         public GameObject prefab;
         private GameObject target;
+        private DayNightCycle cycle;
 
         private IBrain brain;
         private Damageable damageable;
@@ -22,6 +23,10 @@ namespace Organism {
             this.attack = gene.attack;
             this.attackGap = gene.attackGap;
             this.timeSinceLastAttacked = attackGap;
+        }
+
+        public void SetupCycle(DayNightCycle cycle) {
+            this.cycle = cycle;
         }
 
         void Start() {
