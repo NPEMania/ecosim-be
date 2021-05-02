@@ -34,33 +34,29 @@ public class Environment : MonoBehaviour {
             
            
             Color background = new Color(
-                 UnityEngine.Random.Range(0f, 1f), 
-                 UnityEngine.Random.Range(0f, 1f), 
-                 UnityEngine.Random.Range(0f, 1f)
-                 );
+                UnityEngine.Random.Range(0f, 1f), 
+                UnityEngine.Random.Range(0f, 1f), 
+                UnityEngine.Random.Range(0f, 1f)
+            );
             //Debug.Log("Gene from gene input: " + gene.species + " --- " + gene.maxHP + " --- " + gene.scale);
              
-                for(int i=0;i<genesCount[j];i++)
-                {
-                     Gene gene = new Gene(g);
-                     Debug.Log("kkkk  "+gene.gender);
-                     if(i%2==0)
-                     {
-                        gene.gender=Gender.MALE;
-                     }else{
-                        gene.gender=Gender.FEMALE;
-                     }
-                       Debug.Log("kkkk  "+gene.gender);
-                    float x = UnityEngine.Random.Range(-50f, 50f );
-                    float z = UnityEngine.Random.Range(-50f, 50f );
-                    float y = gene.scale;
-                    Vector3 vec=new Vector3(x,y,z);
-                    FSMBrain.Create(gene, animalPrefab, vec, Quaternion.LookRotation(Vector3.zero-vec,Vector3.up), 0,background);
-                    
+            for (int i=0;i<genesCount[j];i++) {
+                Gene gene = new Gene(g);
+                Debug.Log("kkkk  "+gene.gender);
+                if(i%2==0) {
+                    gene.gender=Gender.MALE;
+                }else{
+                    gene.gender=Gender.FEMALE;
                 }
-
+                Debug.Log("kkkk  "+gene.gender);
+                float x = UnityEngine.Random.Range(-50f, 50f );
+                float z = UnityEngine.Random.Range(-50f, 50f );
+                float y = gene.scale;
+                Vector3 vec=new Vector3(x,y,z);
+                Vector3 center = new Vector3(0, y, 0);
+                FSMBrain.Create(gene, animalPrefab, vec, Quaternion.LookRotation(center - vec, Vector3.up), 0,background);
+            }
                 j++;
-            
         }
     }
 

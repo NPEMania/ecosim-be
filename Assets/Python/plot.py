@@ -5,7 +5,7 @@ import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
 data_list = []
-with open("outputData.txt", "r") as f:
+with open("../outputData.txt", "r") as f:
     for line in f:
         if line.strip() == '[' or line.strip() == ']':
             continue

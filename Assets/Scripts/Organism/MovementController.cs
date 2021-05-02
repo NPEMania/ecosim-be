@@ -110,6 +110,7 @@ namespace Organism {
                     Debug.Log("REST State");
                     body.velocity = Vector3.zero;
                     body.angularVelocity = Vector3.zero;
+                    brain.Velocity = Vector3.zero;
                     break;
                 }
                 case OrganismState.EVADING: {

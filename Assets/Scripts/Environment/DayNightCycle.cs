@@ -20,6 +20,7 @@ public class DayNightCycle : MonoBehaviour {
 
     void Awake() {
         dayRate = 24f / (60f * dayEquivalentInMinutes);
+        timeOfDay = 7f;
     }
 
     private void Update() {
