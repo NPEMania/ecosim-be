@@ -40,7 +40,7 @@ namespace Organism {
         public int killSuccess = 0;
         public int evasions = 0;
         public int childrenCount = 0;
-        public String causeOfDeath;
+        public String causeOfDeath = "";
         private Environment environment;
         private float depletionRatio = 0.36f;
 
@@ -108,7 +108,7 @@ namespace Organism {
                     } else {
                         causeOfDeath = "health-depleted";
                     }
-                    environment.RegisterDeath(new OrganismExportData(gene, this));
+                    //environment.RegisterDeath(new OrganismExportData(gene, this));
                     Destroy(this.gameObject);
                 }
                 if (currentHP > gene.maxHP) currentHP = gene.maxHP;
@@ -250,7 +250,7 @@ namespace Organism {
          
             if (timeSinceAlive > gene.lifespan) {
                 causeOfDeath = "lifespan";
-                environment.RegisterDeath(new OrganismExportData(gene, this));
+                //environment.RegisterDeath(new OrganismExportData(gene, this));
                 Destroy(this.gameObject);
             }
             if (OrgState != OrganismState.REST) {
@@ -372,7 +372,8 @@ namespace Organism {
         }
 
         private void OnDestroy() {
-            //Debug.Log(gene.species + " --- " + causeOfDeath + " <-");
+            if (String.IsNullOrEmpty(causeOfDeath)) causeOfDeath = "application-quit";
+            environment.RegisterDeath(new OrganismExportData(gene, this));
         }
     }
 }

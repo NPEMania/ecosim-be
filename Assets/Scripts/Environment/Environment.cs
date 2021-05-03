@@ -20,11 +20,11 @@ public class Environment : MonoBehaviour {
         GeneCollection collection = JsonUtility.FromJson<GeneCollection>(jsonInput.text);
         GeneCountCollection collectionCount = JsonUtility.FromJson<GeneCountCollection>(jsonInputCount.text);
        
-       SpawnInitialAnimals(collection.genes,collectionCount.genesCount);
-       SpawnPlantsInVicinity(15);
+        SpawnInitialAnimals(collection.genes,collectionCount.genesCount);
+        SpawnPlantsInVicinity(60);
         outPath = Application.dataPath + outPath;
         writer = new StreamWriter(File.Open(outPath, FileMode.Create));
-        writer.WriteLine("[");
+        //writer.WriteLine("[");
     }
 
     private void SpawnInitialAnimals(GeneInput[] geneInputs,int[] genesCount) {
@@ -43,14 +43,14 @@ public class Environment : MonoBehaviour {
             for (int i=0;i<genesCount[j];i++) {
                 Gene gene = new Gene(g);
                 //Debug.Log("kkkk  "+gene.gender);
-                if(i%3==0) {
+                if(i%2==0) {
                     gene.gender=Gender.MALE;
                 }else{
                     gene.gender=Gender.FEMALE;
                 }
                 //Debug.Log("kkkk  "+gene.gender);
-                float x = UnityEngine.Random.Range(-40f, 40f);
-                float z = UnityEngine.Random.Range(-40f, 40f);
+                float x = UnityEngine.Random.Range(-200f, 200f);
+                float z = UnityEngine.Random.Range(-200f, 200f);
                 float y = gene.scale;
                 Vector3 vec=new Vector3(x,y,z);
                 Vector3 center = new Vector3(0, y, 0);
@@ -62,8 +62,8 @@ public class Environment : MonoBehaviour {
 
     public void SpawnPlantsInVicinity(int count){
         for(int i=0;i<count;i++){
-            float x = UnityEngine.Random.Range(-40f, 40f );
-            float z = UnityEngine.Random.Range(-40f, 40f );
+            float x = UnityEngine.Random.Range(-200f, 200f);
+            float z = UnityEngine.Random.Range(-200f, 200f);
             float y = 0;
             Vector3 vec=new Vector3(x,y,z);
             // Vector3 spawnPosition = vec + UtilityMethods.OnUnitCircle() * 10;
@@ -80,7 +80,7 @@ public class Environment : MonoBehaviour {
     }
 
     private void OnApplicationQuit() {
-        writer.WriteLine("]");
-        writer.Close();
+        //writer.WriteLine("]");
+        //writer.Close();
     }
 }

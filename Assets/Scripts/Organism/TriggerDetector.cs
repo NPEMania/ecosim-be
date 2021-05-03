@@ -24,7 +24,7 @@ namespace Organism {
 
         private void OnTriggerStay(Collider other) {
             if (other.gameObject.tag == "organism") {
-                Debug.Log(brain.SelfGene.species + " " + brain.OrgState + " " + other.gameObject.name);
+                //Debug.Log(brain.SelfGene.species + " " + brain.OrgState + " " + other.gameObject.name);
                 var otherBrain = other.gameObject.GetComponent<IBrain>();
                 //Debug.Log("Brain is null  " + (brain == null));
                 if (brain.OrgState == OrganismState.SEEKING_FOOD) {
